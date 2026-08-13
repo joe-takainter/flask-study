@@ -10,7 +10,7 @@ def home():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return "これは住所録アプリの説明ページです。"
 
 
 if __name__ == "__main__":
