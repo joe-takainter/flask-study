@@ -1,0 +1,4 @@
+Takeshi,30,ボウリング
+Yamada,25,野球
+Suzuki,40,ゴルフ
+Tanaka,35,旅行
