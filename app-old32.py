@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -30,17 +30,6 @@ def load_people():
     file.close()
 
     return people
-def save_people(people):
-
-    file = open("people.txt", "w", encoding="utf-8")
-
-    for person in people:
-
-        file.write(person["name"] + ",")
-        file.write(person["age"] + ",")
-        file.write(person["hobby"] + "\n")
-
-    file.close()
 
 
 @app.route("/")
@@ -61,31 +50,6 @@ def show_people():
     people = load_people()
 
     return render_template("people.html", people=people)
-
-@app.route("/add", methods=["GET", "POST"])
-def add_person():
-
-    if request.method == "POST":
-
-        name = request.form["name"]
-        age = request.form["age"]
-        hobby = request.form["hobby"]
-
-        person = {
-            "name": name,
-            "age": age,
-            "hobby": hobby
-        }
-
-        people = load_people()
-
-        people.append(person)
-
-        save_people(people)
-
-        return redirect("/people")
-
-    return render_template("add.html")
 
 
 if __name__ == "__main__":
