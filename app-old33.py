@@ -65,47 +65,27 @@ def show_people():
 @app.route("/add", methods=["GET", "POST"])
 def add_person():
 
-    error = ""
-
     if request.method == "POST":
 
-        name = request.form["name"].strip()
-        age = request.form["age"].strip()
-        hobby = request.form["hobby"].strip()
+        name = request.form["name"]
+        age = request.form["age"]
+        hobby = request.form["hobby"]
 
-        if name == "":
-            error = "名前は必ず入力してください。"
+        person = {
+            "name": name,
+            "age": age,
+            "hobby": hobby
+        }
 
-        else:
-            people = load_people()
+        people = load_people()
 
-            duplicate = False
+        people.append(person)
 
-            for person in people:
+        save_people(people)
 
-                if person["name"] == name:
+        return redirect("/people")
 
-                    duplicate = True
-
-                    break
-
-            if duplicate:
-                error = "同じ名前が登録されています。"
-
-            else:
-                person = {
-                    "name": name,
-                    "age": age,
-                    "hobby": hobby
-                }
-
-                people.append(person)
-
-                save_people(people)
-
-                return redirect("/people")
-
-    return render_template("add.html", error=error)
+    return render_template("add.html")
 
 
 if __name__ == "__main__":
