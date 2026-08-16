@@ -3,3 +3,4 @@ Yamada,25,野球
 Suzuki,40,ゴルフ
 Tanaka,35,旅行
 Sato,28,映画
+Awano,35,旅行

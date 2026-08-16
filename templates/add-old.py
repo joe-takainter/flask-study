@@ -19,19 +19,19 @@
     <form method="POST">
 
         <p>
-    名前：
-    <input type="text" name="name" value="{{ name }}">
-</p>
+            名前：
+            <input type="text" name="name">
+        </p>
 
-<p>
-    年齢：
-    <input type="text" name="age" value="{{ age }}">
-</p>
+        <p>
+            年齢：
+            <input type="text" name="age">
+        </p>
 
-<p>
-    趣味：
-    <input type="text" name="hobby" value="{{ hobby }}">
-</p>
+        <p>
+            趣味：
+            <input type="text" name="hobby">
+        </p>
 
         <button type="submit">登録</button>
 

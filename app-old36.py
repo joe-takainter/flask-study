@@ -66,9 +66,6 @@ def show_people():
 def add_person():
 
     error = ""
-    name = ""
-    age = ""
-    hobby = ""
 
     if request.method == "POST":
 
@@ -85,15 +82,13 @@ def add_person():
         elif not age.isdigit():
             error = "年齢は数字で入力してください。"
 
-        elif int(age) < 0 or int(age) > 120:
-            error = "年齢は0～120の範囲で入力してください。"
-
         else:
             people = load_people()
 
             duplicate = False
 
             for person in people:
+
                 if person["name"] == name:
                     duplicate = True
                     break
@@ -114,13 +109,7 @@ def add_person():
 
                 return redirect("/people")
 
-    return render_template(
-        "add.html",
-        error=error,
-        name=name,
-        age=age,
-        hobby=hobby
-    )
+    return render_template("add.html", error=error)
 
 
 if __name__ == "__main__":
