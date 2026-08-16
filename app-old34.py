@@ -76,12 +76,6 @@ def add_person():
         if name == "":
             error = "名前は必ず入力してください。"
 
-        elif age == "":
-            error = "年齢は必ず入力してください。"
-
-        elif not age.isdigit():
-            error = "年齢は数字で入力してください。"
-
         else:
             people = load_people()
 
@@ -90,7 +84,9 @@ def add_person():
             for person in people:
 
                 if person["name"] == name:
+
                     duplicate = True
+
                     break
 
             if duplicate:
