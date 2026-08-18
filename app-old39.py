@@ -124,41 +124,33 @@ def add_person():
         hobby=hobby
     )
 @app.route("/delete/<name>")
-@app.route("/delete/<name>", methods=["GET", "POST"])
 def delete_person(name):
 
     people = load_people()
 
-    target = None
+    found = False
 
     for person in people:
 
         if person["name"] == name:
 
-            target = person
+            people.remove(person)
+
+            found = True
 
             break
 
-    if target is None:
-
-        flash("その名前は登録されていません。")
-
-        return redirect("/people")
-
-    if request.method == "POST":
-
-        people.remove(target)
+    if found:
 
         save_people(people)
 
         flash("削除しました。")
 
-        return redirect("/people")
+    else:
 
-    return render_template(
-        "delete_confirm.html",
-        person=target
-    )
+        flash("その名前は登録されていません。")
+
+    return redirect("/people")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
