@@ -4,7 +4,6 @@ Suzuki,40,ゴルフ
 Tanaka,35,旅行
 Sato,28,映画
 Awano,35,旅行
-matumoto,30,音楽鑑賞
 Tokiko,40,Youtube
 Ryuichi,30,野球
 Yoshiaki,20,映画

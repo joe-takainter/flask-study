@@ -123,34 +123,7 @@ def add_person():
         age=age,
         hobby=hobby
     )
-@app.route("/delete/<name>")
-def delete_person(name):
 
-    people = load_people()
-
-    found = False
-
-    for person in people:
-
-        if person["name"] == name:
-
-            people.remove(person)
-
-            found = True
-
-            break
-
-    if found:
-
-        save_people(people)
-
-        flash("削除しました。")
-
-    else:
-
-        flash("その名前は登録されていません。")
-
-    return redirect("/people")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

@@ -31,17 +31,13 @@
 
 {% for person in people %}
 
-    <p>--------------------</p>
+        <p>--------------------</p>
 
-    <p>名前：{{ person["name"] }}</p>
-    <p>年齢：{{ person["age"] }}</p>
-    <p>趣味：{{ person["hobby"] }}</p>
+        <p>名前：{{ person["name"] }}</p>
+        <p>年齢：{{ person["age"] }}</p>
+        <p>趣味：{{ person["hobby"] }}</p>
 
-    <p>
-        <a href="/delete/{{ person['name'] }}">削除</a>
-    </p>
-
-{% endfor %}
+    {% endfor %}
 
     <p>
         <a href="/">トップページへ戻る</a>
