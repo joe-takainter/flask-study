@@ -167,12 +167,15 @@ def edit_person(name):
     target = None
 
     for person in people:
+
         if person["name"] == name:
             target = person
             break
 
     if target is None:
+
         flash("その名前は登録されていません。")
+
         return redirect("/people")
 
     error = ""
@@ -197,32 +200,15 @@ def edit_person(name):
 
         else:
 
-            duplicate = False
-
-            for person in people:
-
-                if person["name"] == new_name and person is not target:
-                    duplicate = True
-                    break
-
-            if duplicate:
-                error = "同じ名前が登録されています。"
-
-            else:
-                target["name"] = new_name
-                target["age"] = new_age
-                target["hobby"] = new_hobby
-
-                save_people(people)
-
-                flash("更新しました。")
-
-                return redirect("/people")
-
-        if error != "":
             target["name"] = new_name
             target["age"] = new_age
             target["hobby"] = new_hobby
+
+            save_people(people)
+
+            flash("更新しました。")
+
+            return redirect("/people")
 
     return render_template(
         "edit.html",
