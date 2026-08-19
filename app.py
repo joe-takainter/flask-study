@@ -123,7 +123,7 @@ def add_person():
         age=age,
         hobby=hobby
     )
-@app.route("/delete/<name>")
+
 @app.route("/delete/<name>", methods=["GET", "POST"])
 def delete_person(name):
 
@@ -158,6 +158,62 @@ def delete_person(name):
     return render_template(
         "delete_confirm.html",
         person=target
+    )
+@app.route("/edit/<name>", methods=["GET", "POST"])
+def edit_person(name):
+
+    people = load_people()
+
+    target = None
+
+    for person in people:
+
+        if person["name"] == name:
+            target = person
+            break
+
+    if target is None:
+
+        flash("その名前は登録されていません。")
+
+        return redirect("/people")
+
+    error = ""
+
+    if request.method == "POST":
+
+        new_name = request.form["name"].strip()
+        new_age = request.form["age"].strip()
+        new_hobby = request.form["hobby"].strip()
+
+        if new_name == "":
+            error = "名前は必ず入力してください。"
+
+        elif new_age == "":
+            error = "年齢は必ず入力してください。"
+
+        elif not new_age.isdigit():
+            error = "年齢は数字で入力してください。"
+
+        elif int(new_age) < 0 or int(new_age) > 120:
+            error = "年齢は0～120の範囲で入力してください。"
+
+        else:
+
+            target["name"] = new_name
+            target["age"] = new_age
+            target["hobby"] = new_hobby
+
+            save_people(people)
+
+            flash("更新しました。")
+
+            return redirect("/people")
+
+    return render_template(
+        "edit.html",
+        person=target,
+        error=error
     )
 
 if __name__ == "__main__":

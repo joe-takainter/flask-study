@@ -38,7 +38,6 @@
     <p>趣味：{{ person["hobby"] }}</p>
 
     <p>
-        <a href="/edit/{{ person['name'] }}">編集</a>
         <a href="/delete/{{ person['name'] }}">削除</a>
     </p>
 

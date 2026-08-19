@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>住所録の編集</title>
+</head>
+
+<body>
+
+    <h1>住所録の編集</h1>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+
+        <p>
+            名前：
+            <input type="text" name="name" value="{{ person['name'] }}">
+        </p>
+
+        <p>
+            年齢：
+            <input type="text" name="age" value="{{ person['age'] }}">
+        </p>
+
+        <p>
+            趣味：
+            <input type="text" name="hobby" value="{{ person['hobby'] }}">
+        </p>
+
+        <button type="submit">更新する</button>
+
+    </form>
+
+    <p>
+        <a href="/people">キャンセル</a>
+    </p>
+
+</body>
+
+</html>
