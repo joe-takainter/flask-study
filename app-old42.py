@@ -114,7 +114,7 @@ def add_person():
 
                 flash("登録しました！")
 
-                return redirect(url_for("show_people"))
+                return redirect("/people")
 
     return render_template(
         "add.html",
@@ -143,7 +143,7 @@ def delete_person(name):
 
         flash("その名前は登録されていません。")
 
-        return redirect(url_for("show_people"))
+        return redirect("/people")
 
     if request.method == "POST":
 
@@ -153,7 +153,7 @@ def delete_person(name):
 
         flash("削除しました。")
 
-        return redirect(url_for("show_people"))
+        return redirect("/people")
 
     return render_template(
         "delete_confirm.html",
@@ -173,7 +173,7 @@ def edit_person(name):
 
     if target is None:
         flash("その名前は登録されていません。")
-        return redirect(url_for("show_people"))
+        return redirect("/people")
 
     error = ""
 
@@ -217,7 +217,7 @@ def edit_person(name):
 
                 flash("更新しました。")
 
-                return redirect(url_for("show_people"))
+                return redirect("/people")
 
         if error != "":
             target["name"] = new_name
