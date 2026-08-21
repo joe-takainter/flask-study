@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        {% block title %}
+        住所録アプリ
+        {% endblock %}
+    </title>
+</head>
+
+<body>
+
+    <h1>住所録アプリ</h1>
+
+    <p>
+        <a href="{{ url_for('home') }}">トップ</a>
+        |
+        <a href="{{ url_for('show_people') }}">住所録一覧</a>
+        |
+        <a href="{{ url_for('add_person') }}">新規登録</a>
+        |
+        <a href="{{ url_for('about') }}">このアプリについて</a>
+    </p>
+
+    <hr>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+</html>

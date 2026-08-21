@@ -1,21 +1,15 @@
-<!DOCTYPE html>
-<html lang="ja">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>このアプリについて</title>
-</head>
 
-<body>
+{% block title %}
+このアプリについて
+{% endblock %}
 
-    <h1>このアプリについて</h1>
 
-    <p>PythonとFlaskで作成している住所録アプリです。</p>
+{% block content %}
 
-    <p>
-        <a href="{{ url_for('home') }}">トップページへ戻る</a>
-    </p>
+<h2>このアプリについて</h2>
 
-</body>
+<p>PythonとFlaskで作成している住所録アプリです。</p>
 
-</html>
+{% endblock %}

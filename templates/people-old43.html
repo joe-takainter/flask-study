@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>住所録一覧</title>
+</head>
+
+<body>
+
+    <h1>住所録一覧</h1>
+
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <p>{{ message }}</p>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+    <p>
+        <a href="{{ url_for('add_person') }}">新しい人を登録する</a>
+    </p>
+
+
+{% for person in people %}
+
+    <p>--------------------</p>
+
+    <p>名前：{{ person["name"] }}</p>
+    <p>年齢：{{ person["age"] }}</p>
+    <p>趣味：{{ person["hobby"] }}</p>
+
+    <p>
+        <a href="{{ url_for('edit_person', name=person['name']) }}">編集</a>
+        <a href="{{ url_for('delete_person', name=person['name']) }}">削除</a>
+    </p>
+
+{% endfor %}
+
+    <p>
+        <a href="{{ url_for('home') }}">トップページへ戻る</a>
+    </p>
+
+</body>
+
+</html>

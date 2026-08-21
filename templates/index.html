@@ -1,22 +1,14 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>住所録アプリ</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>住所録アプリ</h1>
+{% block title %}
+トップページ
+{% endblock %}
 
-    <p>Flaskで作ったWebアプリです。</p>
 
-    <p>
-        <a href="/people">住所録一覧を見る</a>
-    </p>
+{% block content %}
 
-    <p>
-        <a href="/about">このアプリについて</a>
-    </p>
+<h2>トップページ</h2>
 
-</body>
-</html>
+<p>Flaskで作った住所録Webアプリです。</p>
+
+{% endblock %}
