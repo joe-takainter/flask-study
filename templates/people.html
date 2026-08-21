@@ -25,21 +25,23 @@
 
 {% for person in people %}
 
-    <p>--------------------</p>
+    <div class="person">
 
-    <p>名前：{{ person["name"] }}</p>
-    <p>年齢：{{ person["age"] }}</p>
-    <p>趣味：{{ person["hobby"] }}</p>
+        <p>名前：{{ person["name"] }}</p>
+        <p>年齢：{{ person["age"] }}</p>
+        <p>趣味：{{ person["hobby"] }}</p>
 
-    <p>
-        <a href="{{ url_for('edit_person', name=person['name']) }}">
-            編集
-        </a>
+        <p>
+            <a href="{{ url_for('edit_person', name=person['name']) }}">
+                編集
+            </a>
 
-        <a href="{{ url_for('delete_person', name=person['name']) }}">
-            削除
-        </a>
-    </p>
+            <a href="{{ url_for('delete_person', name=person['name']) }}">
+                削除
+            </a>
+        </p>
+
+    </div>
 
 {% endfor %}
 
