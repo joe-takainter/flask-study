@@ -10,15 +10,12 @@
 
 <h2>住所録一覧</h2>
 
-
 {% with messages = get_flashed_messages() %}
 
     {% if messages %}
 
         {% for message in messages %}
-
             <p>{{ message }}</p>
-
         {% endfor %}
 
     {% endif %}
@@ -26,28 +23,15 @@
 {% endwith %}
 
 
-<table>
+{% for person in people %}
 
-    <tr>
-        <th>名前</th>
-        <th>年齢</th>
-        <th>趣味</th>
-        <th>操作</th>
-    </tr>
+    <div class="person">
 
+        <p>名前：{{ person["name"] }}</p>
+        <p>年齢：{{ person["age"] }}</p>
+        <p>趣味：{{ person["hobby"] }}</p>
 
-    {% for person in people %}
-
-    <tr>
-
-        <td>{{ person["name"] }}</td>
-
-        <td>{{ person["age"] }}</td>
-
-        <td>{{ person["hobby"] }}</td>
-
-        <td>
-
+        <p>
             <a href="{{ url_for('edit_person', name=person['name']) }}">
                 編集
             </a>
@@ -55,13 +39,10 @@
             <a href="{{ url_for('delete_person', name=person['name']) }}">
                 削除
             </a>
+        </p>
 
-        </td>
+    </div>
 
-    </tr>
-
-    {% endfor %}
-
-</table>
+{% endfor %}
 
 {% endblock %}
