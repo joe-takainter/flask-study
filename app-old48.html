@@ -66,11 +66,7 @@ def show_people():
 
         for person in people:
 
-            if (
-                query.lower() in person["name"].lower()
-                or
-                query.lower() in person["hobby"].lower()
-            ):
+            if query.lower() in person["name"].lower():
 
                 filtered_people.append(person)
 

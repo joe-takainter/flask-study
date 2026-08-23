@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+住所録一覧
+{% endblock %}
+
+
+{% block content %}
+
+<h2>住所録一覧</h2>
+
+
+<!-- 検索フォーム -->
+<form method="GET" action="{{ url_for('show_people') }}">
+
+    <p>
+        名前を検索：
+
+        <input type="text" name="q" value="{{ query }}">
+
+        <button type="submit">検索</button>
+
+        {% if query %}
+
+            <a href="{{ url_for('show_people') }}">
+                一覧に戻す
+            </a>
+
+        {% endif %}
+
+    </p>
+
+</form>
+
+
+<!-- 検索結果の件数 -->
+{% if query %}
+
+    <p>
+        「{{ query }}」の検索結果：{{ count }}件
+    </p>
+
+{% endif %}
+
+
+<!-- 登録・更新・削除後のメッセージ -->
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <p>{{ message }}</p>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- people にデータがある場合 -->
+{% if people %}
+
+<table>
+
+    <tr>
+        <th>名前</th>
+        <th>年齢</th>
+        <th>趣味</th>
+        <th>操作</th>
+    </tr>
+
+
+    {% for person in people %}
+
+    <tr>
+
+        <td>{{ person["name"] }}</td>
+
+        <td>{{ person["age"] }}</td>
+
+        <td>{{ person["hobby"] }}</td>
+
+        <td>
+
+            <a href="{{ url_for('edit_person', name=person['name']) }}">
+                編集
+            </a>
+
+            <a href="{{ url_for('delete_person', name=person['name']) }}">
+                削除
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+<!-- people にデータがない場合 -->
+{% else %}
+
+    <!-- 検索した結果、0件だった場合 -->
+    {% if query %}
+
+        <p>「{{ query }}」に一致する人は見つかりませんでした。</p>
+
+    <!-- 住所録そのものが空の場合 -->
+    {% else %}
+
+        <p>現在、住所録には誰も登録されていません。</p>
+
+    {% endif %}
+
+{% endif %}
+
+
+{% endblock %}{% extends "base.html" %}
+
+
+{% block title %}
+住所録一覧
+{% endblock %}
+
+
+{% block content %}
+
+<h2>住所録一覧</h2>
+
+
+<!-- 検索フォーム -->
+<form method="GET" action="{{ url_for('show_people') }}">
+
+    <p>
+        名前を検索：
+
+        <input type="text" name="q" value="{{ query }}">
+
+        <button type="submit">検索</button>
+
+        {% if query %}
+
+            <a href="{{ url_for('show_people') }}">
+                一覧に戻す
+            </a>
+
+        {% endif %}
+
+    </p>
+
+</form>
+
+
+<!-- 検索結果の件数 -->
+{% if query %}
+
+    <p>
+        「{{ query }}」の検索結果：{{ count }}件
+    </p>
+
+{% endif %}
+
+
+<!-- 登録・更新・削除後のメッセージ -->
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <p>{{ message }}</p>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- people にデータがある場合 -->
+{% if people %}
+
+<table>
+
+    <tr>
+        <th>名前</th>
+        <th>年齢</th>
+        <th>趣味</th>
+        <th>操作</th>
+    </tr>
+
+
+    {% for person in people %}
+
+    <tr>
+
+        <td>{{ person["name"] }}</td>
+
+        <td>{{ person["age"] }}</td>
+
+        <td>{{ person["hobby"] }}</td>
+
+        <td>
+
+            <a href="{{ url_for('edit_person', name=person['name']) }}">
+                編集
+            </a>
+
+            <a href="{{ url_for('delete_person', name=person['name']) }}">
+                削除
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+<!-- people にデータがない場合 -->
+{% else %}
+
+    <!-- 検索した結果、0件だった場合 -->
+    {% if query %}
+
+        <p>「{{ query }}」に一致する人は見つかりませんでした。</p>
+
+    <!-- 住所録そのものが空の場合 -->
+    {% else %}
+
+        <p>現在、住所録には誰も登録されていません。</p>
+
+    {% endif %}
+
+{% endif %}
+
+
+{% endblock %}
