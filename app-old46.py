@@ -48,8 +48,10 @@ def home():
 
     return render_template("index.html")
 
+
 @app.route("/about")
 def about():
+
     return render_template("about.html")
 
 
@@ -58,28 +60,7 @@ def show_people():
 
     people = load_people()
 
-    query = request.args.get("q", "").strip()
-
-    if query != "":
-
-        filtered_people = []
-
-        for person in people:
-
-            if query.lower() in person["name"].lower():
-
-                filtered_people.append(person)
-
-        people = filtered_people
-
-    count = len(people)
-
-    return render_template(
-        "people.html",
-        people=people,
-        query=query,
-        count=count
-    )
+    return render_template("people.html", people=people)
 
 @app.route("/add", methods=["GET", "POST"])
 def add_person():

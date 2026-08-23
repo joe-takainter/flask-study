@@ -11,19 +11,6 @@
 <h2>住所録一覧</h2>
 
 
-<!-- 検索フォーム -->
-<form method="GET" action="{{ url_for('show_people') }}">
-
-    <p>
-        名前を検索：
-        <input type="text" name="q" value="{{ query }}">
-        <button type="submit">検索</button>
-    </p>
-
-</form>
-
-
-<!-- 登録・更新・削除後のメッセージ -->
 {% with messages = get_flashed_messages() %}
 
     {% if messages %}
@@ -38,9 +25,6 @@
 
 {% endwith %}
 
-
-<!-- people にデータがある場合 -->
-{% if people %}
 
 <table>
 
@@ -79,24 +63,5 @@
     {% endfor %}
 
 </table>
-
-
-<!-- people にデータがない場合 -->
-{% else %}
-
-    <!-- 検索した結果、0件だった場合 -->
-    {% if query %}
-
-        <p>「{{ query }}」に一致する人は見つかりませんでした。</p>
-
-    <!-- 住所録そのものが空の場合 -->
-    {% else %}
-
-        <p>現在、住所録には誰も登録されていません。</p>
-
-    {% endif %}
-
-{% endif %}
-
 
 {% endblock %}
