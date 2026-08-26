@@ -3,8 +3,6 @@ import sqlite3
 
 connection = sqlite3.connect("people.db")
 
-connection.row_factory = sqlite3.Row
-
 cursor = connection.cursor()
 
 
@@ -15,10 +13,10 @@ rows = cursor.fetchall()
 
 for row in rows:
 
-    print("ID：", row["id"])
-    print("名前：", row["name"])
-    print("年齢：", row["age"])
-    print("趣味：", row["hobby"])
+    print("ID：", row[0])
+    print("名前：", row[1])
+    print("年齢：", row[2])
+    print("趣味：", row[3])
     print("--------------------")
 
 
