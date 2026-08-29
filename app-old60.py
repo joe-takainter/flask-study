@@ -132,33 +132,28 @@ def add_person():
             error = "年齢は0～120の範囲で入力してください。"
 
         else:
+            people = load_people()
 
-            connection = get_db_connection()
+            duplicate = False
 
-            person = connection.execute(
-                "SELECT * FROM people WHERE name = ?",
-                (name,)
-            ).fetchone()
+            for person in people:
+                if person["name"] == name:
+                    duplicate = True
+                    break
 
-            if person:
-
+            if duplicate:
                 error = "同じ名前が登録されています。"
 
-                connection.close()
-
             else:
+                person = {
+                    "name": name,
+                    "age": age,
+                    "hobby": hobby
+                }
 
-                connection.execute(
-                    """
-                    INSERT INTO people (name, age, hobby)
-                    VALUES (?, ?, ?)
-                    """,
-                    (name, age, hobby)
-                )
+                people.append(person)
 
-                connection.commit()
-
-                connection.close()
+                save_people(people)
 
                 flash("登録しました！")
 
