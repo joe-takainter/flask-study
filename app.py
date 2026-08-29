@@ -1,6 +1,20 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
+import sqlite3
+
+
 app = Flask(__name__)
+
 app.secret_key = "flask-study-secret"
+
+
+def get_db_connection():
+
+    connection = sqlite3.connect("people.db")
+
+    connection.row_factory = sqlite3.Row
+
+    return connection
+
 
 
 def load_people():
@@ -56,7 +70,13 @@ def about():
 @app.route("/people")
 def show_people():
 
-    people = load_people()
+    connection = get_db_connection()
+
+    people = connection.execute(
+        "SELECT * FROM people"
+    ).fetchall()
+
+    connection.close()
 
     query = request.args.get("q", "").strip()
 
