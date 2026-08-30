@@ -172,47 +172,40 @@ def add_person():
         hobby=hobby
     )
 
-@app.route("/delete/<int:person_id>", methods=["GET", "POST"])
-def delete_person(person_id):
+@app.route("/delete/<name>", methods=["GET", "POST"])
+def delete_person(name):
 
-    connection = get_db_connection()
+    people = load_people()
 
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
+    target = None
 
+    for person in people:
 
-    if person is None:
+        if person["name"] == name:
 
-        connection.close()
+            target = person
 
-        flash("その人は登録されていません。")
+            break
+
+    if target is None:
+
+        flash("その名前は登録されていません。")
 
         return redirect(url_for("show_people"))
-
 
     if request.method == "POST":
 
-        connection.execute(
-            "DELETE FROM people WHERE id = ?",
-            (person_id,)
-        )
+        people.remove(target)
 
-        connection.commit()
+        save_people(people)
 
-        connection.close()
-
-        flash("削除しました！")
+        flash("削除しました。")
 
         return redirect(url_for("show_people"))
 
-
-    connection.close()
-
     return render_template(
         "delete_confirm.html",
-        person=person
+        person=target
     )
 @app.route("/edit/<int:person_id>", methods=["GET", "POST"])
 def edit_person(person_id):
