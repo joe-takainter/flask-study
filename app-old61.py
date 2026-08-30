@@ -207,111 +207,74 @@ def delete_person(name):
         "delete_confirm.html",
         person=target
     )
-@app.route("/edit/<int:person_id>", methods=["GET", "POST"])
-def edit_person(person_id):
+@app.route("/edit/<name>", methods=["GET", "POST"])
+def edit_person(name):
 
-    connection = get_db_connection()
+    people = load_people()
 
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
+    target = None
 
+    for person in people:
+        if person["name"] == name:
+            target = person
+            break
 
-    if person is None:
-
-        connection.close()
-
-        flash("その人は登録されていません。")
-
+    if target is None:
+        flash("その名前は登録されていません。")
         return redirect(url_for("show_people"))
-
 
     error = ""
 
-
     if request.method == "POST":
 
-        name = request.form["name"].strip()
-        age = request.form["age"].strip()
-        hobby = request.form["hobby"].strip()
+        new_name = request.form["name"].strip()
+        new_age = request.form["age"].strip()
+        new_hobby = request.form["hobby"].strip()
 
-
-        if name == "":
-
+        if new_name == "":
             error = "名前は必ず入力してください。"
 
-
-        elif age == "":
-
+        elif new_age == "":
             error = "年齢は必ず入力してください。"
 
-
-        elif not age.isdigit():
-
+        elif not new_age.isdigit():
             error = "年齢は数字で入力してください。"
 
-
-        elif int(age) < 0 or int(age) > 120:
-
+        elif int(new_age) < 0 or int(new_age) > 120:
             error = "年齢は0～120の範囲で入力してください。"
-
 
         else:
 
-            duplicate = connection.execute(
-                """
-                SELECT * FROM people
-                WHERE name = ? AND id != ?
-                """,
-                (name, person_id)
-            ).fetchone()
+            duplicate = False
 
+            for person in people:
+
+                if person["name"] == new_name and person is not target:
+                    duplicate = True
+                    break
 
             if duplicate:
-
                 error = "同じ名前が登録されています。"
 
-
             else:
+                target["name"] = new_name
+                target["age"] = new_age
+                target["hobby"] = new_hobby
 
-                connection.execute(
-                    """
-                    UPDATE people
-                    SET name = ?, age = ?, hobby = ?
-                    WHERE id = ?
-                    """,
-                    (name, age, hobby, person_id)
-                )
+                save_people(people)
 
-                connection.commit()
-
-                connection.close()
-
-                flash("更新しました！")
+                flash("更新しました。")
 
                 return redirect(url_for("show_people"))
 
-
-        connection.close()
-
-        return render_template(
-            "edit.html",
-            person={
-                "id": person_id,
-                "name": name,
-                "age": age,
-                "hobby": hobby
-            },
-            error=error
-        )
-
-
-    connection.close()
+        if error != "":
+            target["name"] = new_name
+            target["age"] = new_age
+            target["hobby"] = new_hobby
 
     return render_template(
         "edit.html",
-        person=person,
+        person=target,
         error=error
     )
 
