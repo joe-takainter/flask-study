@@ -30,38 +30,35 @@ def about():
 
 
 @app.route("/people")
-@app.route("/people")
 def show_people():
-
-    query = request.args.get("q", "").strip()
 
     connection = get_db_connection()
 
-
-    if query != "":
-
-        search_word = "%" + query + "%"
-
-        people = connection.execute(
-            """
-            SELECT * FROM people
-            WHERE name LIKE ?
-               OR hobby LIKE ?
-            """,
-            (search_word, search_word)
-        ).fetchall()
-
-    else:
-
-        people = connection.execute(
-            "SELECT * FROM people"
-        ).fetchall()
-
+    people = connection.execute(
+        "SELECT * FROM people"
+    ).fetchall()
 
     connection.close()
 
-    count = len(people)
+    query = request.args.get("q", "").strip()
 
+    if query != "":
+
+        filtered_people = []
+
+        for person in people:
+
+            if (
+                query.lower() in person["name"].lower()
+                or
+                query.lower() in person["hobby"].lower()
+            ):
+
+                filtered_people.append(person)
+
+        people = filtered_people
+
+    count = len(people)
 
     return render_template(
         "people.html",
