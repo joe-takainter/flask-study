@@ -17,6 +17,44 @@ def get_db_connection():
 
 
 
+def load_people():
+
+    people = []
+
+    try:
+        file = open("people.txt", "r", encoding="utf-8")
+
+    except FileNotFoundError:
+        return []
+
+    for line in file:
+
+        line = line.strip()
+
+        data = line.split(",")
+
+        person = {}
+
+        person["name"] = data[0]
+        person["age"] = data[1]
+        person["hobby"] = data[2]
+
+        people.append(person)
+
+    file.close()
+
+    return people
+def save_people(people):
+
+    file = open("people.txt", "w", encoding="utf-8")
+
+    for person in people:
+
+        file.write(person["name"] + ",")
+        file.write(person["age"] + ",")
+        file.write(person["hobby"] + "\n")
+
+    file.close()
 
 
 @app.route("/")
