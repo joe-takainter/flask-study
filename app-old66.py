@@ -28,26 +28,12 @@ def home():
 def about():
     return render_template("about.html")
 
+
+@app.route("/people")
 @app.route("/people")
 def show_people():
 
     query = request.args.get("q", "").strip()
-
-    sort = request.args.get("sort", "name")
-
-
-    if sort == "age":
-
-        order_column = "age"
-
-    elif sort == "id":
-
-        order_column = "id"
-
-    else:
-
-        order_column = "name"
-
 
     connection = get_db_connection()
 
@@ -57,11 +43,11 @@ def show_people():
         search_word = "%" + query + "%"
 
         people = connection.execute(
-            f"""
+            """
             SELECT * FROM people
             WHERE name LIKE ?
                OR hobby LIKE ?
-            ORDER BY {order_column}
+            ORDER BY name
             """,
             (search_word, search_word)
         ).fetchall()
@@ -69,9 +55,9 @@ def show_people():
     else:
 
         people = connection.execute(
-            f"""
+            """
             SELECT * FROM people
-            ORDER BY {order_column}
+            ORDER BY name
             """
         ).fetchall()
 
@@ -85,8 +71,7 @@ def show_people():
         "people.html",
         people=people,
         query=query,
-        count=count,
-        sort=sort
+        count=count
     )
 
 @app.route("/add", methods=["GET", "POST"])

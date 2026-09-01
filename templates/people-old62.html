@@ -17,21 +17,43 @@
     <p>
         名前・趣味を検索：
 
-        <input type="text" name="q" value="{{ query }}">
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+        >
+
+        <input
+            type="hidden"
+            name="sort"
+            value="{{ sort }}"
+        >
 
         <button type="submit">検索</button>
-
-        {% if query %}
-
-            <a href="{{ url_for('show_people') }}">
-                一覧に戻す
-            </a>
-
-        {% endif %}
-
     </p>
 
 </form>
+
+
+<p>
+    並び順：
+
+    <a href="{{ url_for('show_people', q=query, sort='name') }}">
+        名前順
+    </a>
+
+    |
+
+    <a href="{{ url_for('show_people', q=query, sort='age') }}">
+        年齢順
+    </a>
+
+    |
+
+    <a href="{{ url_for('show_people', q=query, sort='id') }}">
+        ID順
+    </a>
+</p>
 
 
 <!-- 検索結果の件数 -->
@@ -39,6 +61,12 @@
 
     <p>
         「{{ query }}」の検索結果：{{ count }}件
+    </p>
+
+    <p>
+        <a href="{{ url_for('show_people', sort=sort) }}">
+            一覧に戻す
+        </a>
     </p>
 
 {% endif %}
