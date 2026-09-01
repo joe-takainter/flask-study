@@ -47,7 +47,6 @@ def show_people():
             SELECT * FROM people
             WHERE name LIKE ?
                OR hobby LIKE ?
-            ORDER BY name
             """,
             (search_word, search_word)
         ).fetchall()
@@ -55,10 +54,7 @@ def show_people():
     else:
 
         people = connection.execute(
-            """
-            SELECT * FROM people
-            ORDER BY name
-            """
+            "SELECT * FROM people"
         ).fetchall()
 
 
