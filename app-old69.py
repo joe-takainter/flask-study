@@ -35,8 +35,6 @@ def show_people():
 
     sort = request.args.get("sort", "name")
 
-    direction = request.args.get("direction", "asc")
-
 
     if sort == "age":
 
@@ -51,15 +49,6 @@ def show_people():
         order_column = "name"
 
 
-    if direction == "desc":
-
-        order_direction = "DESC"
-
-    else:
-
-        order_direction = "ASC"
-
-
     connection = get_db_connection()
 
 
@@ -72,7 +61,7 @@ def show_people():
             SELECT * FROM people
             WHERE name LIKE ?
                OR hobby LIKE ?
-            ORDER BY {order_column} {order_direction}
+            ORDER BY {order_column}
             """,
             (search_word, search_word)
         ).fetchall()
@@ -82,7 +71,7 @@ def show_people():
         people = connection.execute(
             f"""
             SELECT * FROM people
-            ORDER BY {order_column} {order_direction}
+            ORDER BY {order_column}
             """
         ).fetchall()
 
@@ -97,8 +86,7 @@ def show_people():
         people=people,
         query=query,
         count=count,
-        sort=sort,
-        direction=direction
+        sort=sort
     )
 
 @app.route("/add", methods=["GET", "POST"])
