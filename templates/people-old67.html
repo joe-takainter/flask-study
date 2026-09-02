@@ -11,7 +11,7 @@
 <h2>住所録一覧</h2>
 
 
-<!-- 検索・並び替えフォーム -->
+<!-- 検索フォーム -->
 <form method="GET" action="{{ url_for('show_people') }}">
 
     <p>
@@ -22,41 +22,38 @@
             name="q"
             value="{{ query }}"
         >
-    </p>
 
+        <input
+            type="hidden"
+            name="sort"
+            value="{{ sort }}"
+        >
 
-    <p>
-        並び順：
-
-        <select name="sort">
-
-            <option value="name"
-                {% if sort == "name" %}selected{% endif %}>
-                名前順
-            </option>
-
-            <option value="age"
-                {% if sort == "age" %}selected{% endif %}>
-                年齢順
-            </option>
-
-            <option value="id"
-                {% if sort == "id" %}selected{% endif %}>
-                ID順
-            </option>
-
-        </select>
-
-    </p>
-
-
-    <p>
-        <button type="submit">
-            検索・並び替え
-        </button>
+        <button type="submit">検索</button>
     </p>
 
 </form>
+
+
+<p>
+    並び順：
+
+    <a href="{{ url_for('show_people', q=query, sort='name') }}">
+        名前順
+    </a>
+
+    |
+
+    <a href="{{ url_for('show_people', q=query, sort='age') }}">
+        年齢順
+    </a>
+
+    |
+
+    <a href="{{ url_for('show_people', q=query, sort='id') }}">
+        ID順
+    </a>
+</p>
 
 
 <!-- 検索結果の件数 -->
