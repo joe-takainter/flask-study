@@ -46,25 +46,7 @@
             </option>
 
         </select>
-    </p>
 
-
-    <p>
-        順序：
-
-        <select name="direction">
-
-            <option value="asc"
-                {% if direction == "asc" %}selected{% endif %}>
-                昇順
-            </option>
-
-            <option value="desc"
-                {% if direction == "desc" %}selected{% endif %}>
-                降順
-            </option>
-
-        </select>
     </p>
 
 
@@ -76,38 +58,6 @@
 
 </form>
 
-<!-- 現在の並び順 -->
-{% if sort == "age" %}
-
-    {% set sort_label = "年齢順" %}
-
-{% elif sort == "id" %}
-
-    {% set sort_label = "ID順" %}
-
-{% else %}
-
-    {% set sort_label = "名前順" %}
-
-{% endif %}
-
-
-{% if direction == "desc" %}
-
-    {% set direction_label = "降順" %}
-
-{% else %}
-
-    {% set direction_label = "昇順" %}
-
-{% endif %}
-
-
-<p>
-    現在の並び順：
-    {{ sort_label }}（{{ direction_label }}）
-</p>
-
 
 <!-- 検索結果の件数 -->
 {% if query %}
@@ -117,7 +67,7 @@
     </p>
 
     <p>
-        <a href="{{ url_for('show_people', sort=sort, direction=direction) }}">
+        <a href="{{ url_for('show_people', sort=sort) }}">
             一覧に戻す
         </a>
     </p>
