@@ -87,11 +87,6 @@ def show_people():
         ).fetchall()
 
 
-    total_count = connection.execute(
-        "SELECT COUNT(*) FROM people"
-    ).fetchone()[0]
-
-
     connection.close()
 
     count = len(people)
@@ -102,7 +97,6 @@ def show_people():
         people=people,
         query=query,
         count=count,
-        total_count=total_count,
         sort=sort,
         direction=direction
     )
