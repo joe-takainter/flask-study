@@ -77,16 +77,6 @@ def show_people():
             (search_word, search_word)
         ).fetchall()
 
-
-        count = connection.execute(
-            """
-            SELECT COUNT(*) FROM people
-            WHERE name LIKE ?
-               OR hobby LIKE ?
-            """,
-            (search_word, search_word)
-        ).fetchone()[0]
-
     else:
 
         people = connection.execute(
@@ -97,17 +87,14 @@ def show_people():
         ).fetchall()
 
 
-        count = connection.execute(
-            "SELECT COUNT(*) FROM people"
-        ).fetchone()[0]
-
-
     total_count = connection.execute(
         "SELECT COUNT(*) FROM people"
     ).fetchone()[0]
 
 
     connection.close()
+
+    count = len(people)
 
 
     return render_template(
