@@ -63,11 +63,6 @@ def show_people():
     connection = get_db_connection()
 
 
-    total_count = connection.execute(
-        "SELECT COUNT(*) FROM people"
-    ).fetchone()[0]
-
-
     if query != "":
 
         search_word = "%" + query + "%"
@@ -101,7 +96,15 @@ def show_people():
             """
         ).fetchall()
 
-        count = total_count
+
+        count = connection.execute(
+            "SELECT COUNT(*) FROM people"
+        ).fetchone()[0]
+
+
+    total_count = connection.execute(
+        "SELECT COUNT(*) FROM people"
+    ).fetchone()[0]
 
 
     connection.close()
