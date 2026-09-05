@@ -113,7 +113,6 @@
     登録人数：{{ total_count }}人
 </p>
 
-
 {% if average_age is not none %}
 
     <p>
@@ -124,36 +123,6 @@
 
     <p>
         平均年齢：データなし
-    </p>
-
-{% endif %}
-
-
-{% if minimum_age is not none %}
-
-    <p>
-        最年少：{{ minimum_age }}歳
-    </p>
-
-{% else %}
-
-    <p>
-        最年少：データなし
-    </p>
-
-{% endif %}
-
-
-{% if maximum_age is not none %}
-
-    <p>
-        最高年齢：{{ maximum_age }}歳
-    </p>
-
-{% else %}
-
-    <p>
-        最高年齢：データなし
     </p>
 
 {% endif %}

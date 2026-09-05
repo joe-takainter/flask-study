@@ -72,15 +72,6 @@ def show_people():
         "SELECT AVG(age) FROM people"
     ).fetchone()[0]
 
-    minimum_age = connection.execute(
-        "SELECT MIN(age) FROM people"
-    ).fetchone()[0]
-
-
-    maximum_age = connection.execute(
-        "SELECT MAX(age) FROM people"
-    ).fetchone()[0]
-
 
     if query != "":
 
@@ -128,8 +119,6 @@ def show_people():
         count=count,
         total_count=total_count,
         average_age=average_age,
-        minimum_age=minimum_age,
-        maximum_age=maximum_age,
         sort=sort,
         direction=direction
     )
