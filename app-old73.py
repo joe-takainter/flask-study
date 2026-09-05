@@ -67,9 +67,8 @@ def show_people():
         "SELECT COUNT(*) FROM people"
     ).fetchone()[0]
 
-
     average_age = connection.execute(
-        "SELECT AVG(age) FROM people"
+    "SELECT AVG(age) FROM people"
     ).fetchone()[0]
 
 
@@ -118,7 +117,6 @@ def show_people():
         query=query,
         count=count,
         total_count=total_count,
-        average_age=average_age,
         sort=sort,
         direction=direction
     )

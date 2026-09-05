@@ -113,20 +113,6 @@
     登録人数：{{ total_count }}人
 </p>
 
-{% if average_age is not none %}
-
-    <p>
-        平均年齢：{{ "%.1f"|format(average_age) }}歳
-    </p>
-
-{% else %}
-
-    <p>
-        平均年齢：データなし
-    </p>
-
-{% endif %}
-
 
 <!-- 検索結果の件数 -->
 {% if query %}
