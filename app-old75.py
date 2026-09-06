@@ -63,22 +63,23 @@ def show_people():
     connection = get_db_connection()
 
 
-    statistics = connection.execute(
-        """
-        SELECT
-            COUNT(*) AS total,
-            AVG(age) AS average,
-            MIN(age) AS minimum,
-            MAX(age) AS maximum
-        FROM people
-        """
-    ).fetchone()
+    total_count = connection.execute(
+        "SELECT COUNT(*) FROM people"
+    ).fetchone()[0]
 
 
-    total_count = statistics["total"]
-    average_age = statistics["average"]
-    minimum_age = statistics["minimum"]
-    maximum_age = statistics["maximum"]
+    average_age = connection.execute(
+        "SELECT AVG(age) FROM people"
+    ).fetchone()[0]
+
+    minimum_age = connection.execute(
+        "SELECT MIN(age) FROM people"
+    ).fetchone()[0]
+
+
+    maximum_age = connection.execute(
+        "SELECT MAX(age) FROM people"
+    ).fetchone()[0]
 
 
     if query != "":
