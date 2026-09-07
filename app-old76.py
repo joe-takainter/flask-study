@@ -37,12 +37,6 @@ def show_people():
 
     direction = request.args.get("direction", "asc")
 
-    min_age = request.args.get("min_age", "")
-
-
-    if min_age not in ["30", "40", "50"]:
-        min_age = ""
-
 
     if sort == "age":
 
@@ -87,26 +81,7 @@ def show_people():
     maximum_age = statistics["maximum"]
 
 
-    # 検索あり ＋ 年齢指定あり
-    if query != "" and min_age != "":
-
-        search_word = "%" + query + "%"
-
-        people = connection.execute(
-            f"""
-            SELECT * FROM people
-            WHERE (name LIKE ? OR hobby LIKE ?)
-              AND age >= ?
-            ORDER BY {order_column} {order_direction}
-            """,
-            (search_word, search_word, int(min_age))
-        ).fetchall()
-
-        count = len(people)
-
-
-    # 検索あり ＋ 年齢指定なし
-    elif query != "":
+    if query != "":
 
         search_word = "%" + query + "%"
 
@@ -120,25 +95,16 @@ def show_people():
             (search_word, search_word)
         ).fetchall()
 
-        count = len(people)
 
-
-    # 検索なし ＋ 年齢指定あり
-    elif min_age != "":
-
-        people = connection.execute(
-            f"""
-            SELECT * FROM people
-            WHERE age >= ?
-            ORDER BY {order_column} {order_direction}
+        count = connection.execute(
+            """
+            SELECT COUNT(*) FROM people
+            WHERE name LIKE ?
+               OR hobby LIKE ?
             """,
-            (int(min_age),)
-        ).fetchall()
+            (search_word, search_word)
+        ).fetchone()[0]
 
-        count = len(people)
-
-
-    # 検索なし ＋ 年齢指定なし
     else:
 
         people = connection.execute(
@@ -164,8 +130,7 @@ def show_people():
         minimum_age=minimum_age,
         maximum_age=maximum_age,
         sort=sort,
-        direction=direction,
-        min_age=min_age
+        direction=direction
     )
 
 @app.route("/add", methods=["GET", "POST"])

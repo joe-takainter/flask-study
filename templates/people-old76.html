@@ -24,34 +24,6 @@
         >
     </p>
 
-    <p>
-       最低年齢：
-    <select name="min_age">
-
-        <option value=""
-            {% if min_age == "" %}selected{% endif %}>
-            すべて
-        </option>
-
-        <option value="30"
-            {% if min_age == "30" %}selected{% endif %}>
-            30歳以上
-        </option>
-
-        <option value="40"
-            {% if min_age == "40" %}selected{% endif %}>
-            40歳以上
-        </option>
-
-        <option value="50"
-            {% if min_age == "50" %}selected{% endif %}>
-            50歳以上
-        </option>
-
-    </select>
-
-    </select>
-</p>
 
     <p>
         並び順：
@@ -188,15 +160,15 @@
 
 
 <!-- 検索結果の件数 -->
-{% if query or min_age %}
+{% if query %}
 
     <p>
-        絞り込み結果：{{ count }}件
+        「{{ query }}」の検索結果：{{ count }}件
     </p>
 
     <p>
         <a href="{{ url_for('show_people', sort=sort, direction=direction) }}">
-            絞り込みを解除
+            一覧に戻す
         </a>
     </p>
 
@@ -265,10 +237,15 @@
 {% else %}
 
     <!-- 検索した結果、0件だった場合 -->
-    {% if query or min_age %}
-         <p>条件に一致する人は見つかりませんでした。</p>
+    {% if query %}
+
+        <p>「{{ query }}」に一致する人は見つかりませんでした。</p>
+
+    <!-- 住所録そのものが空の場合 -->
     {% else %}
-         <p>現在、住所録には誰も登録されていません。</p>
+
+        <p>現在、住所録には誰も登録されていません。</p>
+
     {% endif %}
 
 {% endif %}
