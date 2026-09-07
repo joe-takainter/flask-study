@@ -53,33 +53,6 @@
     </select>
 </p>
 
-<p>
-    最高年齢：
-    <select name="max_age">
-
-        <option value=""
-            {% if max_age == "" %}selected{% endif %}>
-            すべて
-        </option>
-
-        <option value="39"
-            {% if max_age == "39" %}selected{% endif %}>
-            39歳以下
-        </option>
-
-        <option value="49"
-            {% if max_age == "49" %}selected{% endif %}>
-            49歳以下
-        </option>
-
-        <option value="59"
-            {% if max_age == "59" %}selected{% endif %}>
-            59歳以下
-        </option>
-
-    </select>
-</p>
-
     <p>
         並び順：
 
@@ -215,7 +188,7 @@
 
 
 <!-- 検索結果の件数 -->
-{% if query or min_age or max_age %}
+{% if query or min_age %}
 
     <p>
         絞り込み結果：{{ count }}件
@@ -292,7 +265,7 @@
 {% else %}
 
     <!-- 検索した結果、0件だった場合 -->
-    {% if query or min_age or max_age %}
+    {% if query or min_age %}
          <p>条件に一致する人は見つかりませんでした。</p>
     {% else %}
          <p>現在、住所録には誰も登録されていません。</p>
