@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+住所録一覧
+{% endblock %}
+
+
+{% block content %}
+
+<h2>住所録一覧</h2>
+
+
+<!-- 検索・並び替えフォーム -->
+<form method="GET" action="{{ url_for('show_people') }}">
+
+    <p>
+        名前・趣味を検索：
+
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+        >
+    </p>
+
+    <p>
+       最低年齢：
+    <select name="min_age">
+
+        <option value=""
+            {% if min_age == "" %}selected{% endif %}>
+            すべて
+        </option>
+
+        <option value="30"
+            {% if min_age == "30" %}selected{% endif %}>
+            30歳以上
+        </option>
+
+        <option value="40"
+            {% if min_age == "40" %}selected{% endif %}>
+            40歳以上
+        </option>
+
+        <option value="50"
+            {% if min_age == "50" %}selected{% endif %}>
+            50歳以上
+        </option>
+
+    </select>
+
+    </select>
+</p>
+
+<p>
+    最高年齢：
+    <select name="max_age">
+
+        <option value=""
+            {% if max_age == "" %}selected{% endif %}>
+            すべて
+        </option>
+
+        <option value="39"
+            {% if max_age == "39" %}selected{% endif %}>
+            39歳以下
+        </option>
+
+        <option value="49"
+            {% if max_age == "49" %}selected{% endif %}>
+            49歳以下
+        </option>
+
+        <option value="59"
+            {% if max_age == "59" %}selected{% endif %}>
+            59歳以下
+        </option>
+
+    </select>
+</p>
+
+    <p>
+        並び順：
+
+        <select name="sort">
+
+            <option value="name"
+                {% if sort == "name" %}selected{% endif %}>
+                名前順
+            </option>
+
+            <option value="age"
+                {% if sort == "age" %}selected{% endif %}>
+                年齢順
+            </option>
+
+            <option value="id"
+                {% if sort == "id" %}selected{% endif %}>
+                ID順
+            </option>
+
+        </select>
+    </p>
+
+
+    <p>
+        順序：
+
+        <select name="direction">
+
+            <option value="asc"
+                {% if direction == "asc" %}selected{% endif %}>
+                昇順
+            </option>
+
+            <option value="desc"
+                {% if direction == "desc" %}selected{% endif %}>
+                降順
+            </option>
+
+        </select>
+    </p>
+
+
+    <p>
+        <button type="submit">
+            検索・並び替え
+        </button>
+    </p>
+
+</form>
+
+<!-- 現在の並び順 -->
+{% if sort == "age" %}
+
+    {% set sort_label = "年齢順" %}
+
+{% elif sort == "id" %}
+
+    {% set sort_label = "ID順" %}
+
+{% else %}
+
+    {% set sort_label = "名前順" %}
+
+{% endif %}
+
+
+{% if direction == "desc" %}
+
+    {% set direction_label = "降順" %}
+
+{% else %}
+
+    {% set direction_label = "昇順" %}
+
+{% endif %}
+
+
+<p>
+    現在の並び順：
+    {{ sort_label }}（{{ direction_label }}）
+</p>
+
+
+<p>
+    表示人数：{{ total_count }}人
+</p>
+
+
+{% if average_age is not none %}
+
+    <p>
+        平均年齢：{{ "%.1f"|format(average_age) }}歳
+    </p>
+
+{% else %}
+
+    <p>
+        平均年齢：データなし
+    </p>
+
+{% endif %}
+
+
+{% if minimum_age is not none %}
+
+    <p>
+        最年少：{{ minimum_age }}歳
+    </p>
+
+{% else %}
+
+    <p>
+        最年少：データなし
+    </p>
+
+{% endif %}
+
+
+{% if maximum_age is not none %}
+
+    <p>
+        最高年齢：{{ maximum_age }}歳
+    </p>
+
+{% else %}
+
+    <p>
+        最高年齢：データなし
+    </p>
+
+{% endif %}
+
+
+<!-- 検索結果の件数 -->
+{% if query or min_age or max_age %}
+
+    <p>
+        絞り込み結果：{{ count }}件
+    </p>
+
+    <p>
+        <a href="{{ url_for('show_people', sort=sort, direction=direction) }}">
+            絞り込みを解除
+        </a>
+    </p>
+
+{% endif %}
+
+
+<!-- 登録・更新・削除後のメッセージ -->
+{% with messages = get_flashed_messages() %}
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <p>{{ message }}</p>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+<!-- people にデータがある場合 -->
+{% if people %}
+
+<table>
+
+    <tr>
+        <th>名前</th>
+        <th>年齢</th>
+        <th>趣味</th>
+        <th>操作</th>
+    </tr>
+
+
+    {% for person in people %}
+
+    <tr>
+
+        <td>{{ person["name"] }}</td>
+
+        <td>{{ person["age"] }}</td>
+
+        <td>{{ person["hobby"] }}</td>
+
+        <td>
+
+            <a href="{{ url_for('edit_person', person_id=person['id']) }}">
+                編集
+            </a>
+
+            <a href="{{ url_for('delete_person', person_id=person['id']) }}">
+                削除
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+<!-- people にデータがない場合 -->
+{% else %}
+
+    <!-- 検索した結果、0件だった場合 -->
+    {% if query or min_age or max_age %}
+         <p>条件に一致する人は見つかりませんでした。</p>
+    {% else %}
+         <p>現在、住所録には誰も登録されていません。</p>
+    {% endif %}
+
+{% endif %}
+
+
+{% endblock %}

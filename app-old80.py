@@ -95,6 +95,24 @@ def show_people():
     connection = get_db_connection()
 
 
+    statistics = connection.execute(
+        """
+        SELECT
+            COUNT(*) AS total,
+            AVG(age) AS average,
+            MIN(age) AS minimum,
+            MAX(age) AS maximum
+        FROM people
+        """
+    ).fetchone()
+
+
+    total_count = statistics["total"]
+    average_age = statistics["average"]
+    minimum_age = statistics["minimum"]
+    maximum_age = statistics["maximum"]
+
+
     conditions = []
     parameters = []
 
@@ -145,24 +163,13 @@ def show_people():
     ).fetchall()
 
 
-    statistics = connection.execute(
+    count = connection.execute(
         f"""
-        SELECT
-            COUNT(*) AS total,
-            AVG(age) AS average,
-            MIN(age) AS minimum,
-            MAX(age) AS maximum
-        FROM people
+        SELECT COUNT(*) FROM people
         {where_clause}
         """,
         parameters
-    ).fetchone()
-
-
-    count = statistics["total"]
-    average_age = statistics["average"]
-    minimum_age = statistics["minimum"]
-    maximum_age = statistics["maximum"]
+    ).fetchone()[0]
 
 
     connection.close()
@@ -173,7 +180,7 @@ def show_people():
         people=people,
         query=query,
         count=count,
-        total_count=count,
+        total_count=total_count,
         average_age=average_age,
         minimum_age=minimum_age,
         maximum_age=maximum_age,
