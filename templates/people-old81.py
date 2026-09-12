@@ -131,12 +131,6 @@
 
 </form>
 
-{% if error %}
-
-    <p>{{ error }}</p>
-
-{% endif %}
-
 <!-- 現在の並び順 -->
 {% if sort == "age" %}
 

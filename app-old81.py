@@ -67,21 +67,12 @@ def show_people():
     min_age = request.args.get("min_age", "")
     max_age = request.args.get("max_age", "")
 
-    error = ""
-
 
     if min_age not in ["30", "40", "50"]:
         min_age = ""
 
     if max_age not in ["39", "49", "59"]:
         max_age = ""
-
-
-    if min_age != "" and max_age != "":
-
-        if int(min_age) > int(max_age):
-
-            error = "最低年齢は最高年齢以下にしてください。"
 
 
     if sort == "age":
@@ -120,13 +111,13 @@ def show_people():
         parameters.append(search_word)
 
 
-    if min_age != "" and error == "":
+    if min_age != "":
 
         conditions.append("age >= ?")
         parameters.append(int(min_age))
 
 
-    if max_age != "" and error == "":
+    if max_age != "":
 
         conditions.append("age <= ?")
         parameters.append(int(max_age))
@@ -189,8 +180,7 @@ def show_people():
         sort=sort,
         direction=direction,
         min_age=min_age,
-        max_age=max_age,
-        error=error
+        max_age=max_age
     )
 
 @app.route("/add", methods=["GET", "POST"])
