@@ -39,10 +39,3 @@ td {
 th {
     font-weight: bold;
 }
-
-.error-message {
-    border: 1px solid #cc0000;
-    padding: 10px;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
