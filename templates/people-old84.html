@@ -239,13 +239,13 @@
 
 
 <!-- 登録・更新・削除後のメッセージ -->
-{% with messages = get_flashed_messages(with_categories=true) %}
+{% with messages = get_flashed_messages() %}
 
     {% if messages %}
 
-        {% for category, message in messages %}
+        {% for message in messages %}
 
-            <p class="{{ category }}-message">
+            <p class="success-message">
                 {{ message }}
             </p>
 

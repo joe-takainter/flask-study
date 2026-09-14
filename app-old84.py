@@ -248,7 +248,7 @@ def add_person():
 
                 connection.close()
 
-                flash("登録しました！", "success")
+                flash("登録しました！")
 
                 return redirect(url_for("show_people"))
 
@@ -383,7 +383,7 @@ def edit_person(person_id):
 
                 connection.close()
 
-                flash("更新しました！", "success")
+                flash("更新しました！")
 
                 return redirect(url_for("show_people"))
 
@@ -468,7 +468,7 @@ def add_person():
 
                 connection.close()
 
-                flash("登録しました！", "success")
+                flash("登録しました！")
 
                 return redirect(url_for("show_people"))
 
@@ -511,7 +511,7 @@ def delete_person(person_id):
 
         connection.close()
 
-        flash("削除しました！", "success")
+        flash("削除しました！")
 
         return redirect(url_for("show_people"))
 
