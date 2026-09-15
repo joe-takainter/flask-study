@@ -56,29 +56,7 @@ def home():
 
 @app.route("/about")
 def about():
-    return render_template("about.html") 
-
-def get_order(sort, direction):
-
-    if sort == "age":
-        order_column = "age"
-
-    elif sort == "id":
-        order_column = "id"
-
-    else:
-        order_column = "name"
-
-
-    if direction == "desc":
-        order_direction = "DESC"
-
-    else:
-        order_direction = "ASC"
-
-
-    return order_column, order_direction
-
+    return render_template("about.html")
 
 @app.route("/people")
 def show_people():
@@ -110,10 +88,21 @@ def show_people():
             max_age = ""
 
 
-    order_column, order_direction = get_order(
-        sort,
-        direction
-    )
+    if sort == "age":
+        order_column = "age"
+
+    elif sort == "id":
+        order_column = "id"
+
+    else:
+        order_column = "name"
+
+
+    if direction == "desc":
+        order_direction = "DESC"
+
+    else:
+        order_direction = "ASC"
 
 
     connection = get_db_connection()
