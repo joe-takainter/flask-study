@@ -49,7 +49,14 @@ def get_db_connection():
 
 
 
- 
+@app.route("/")
+def home():
+
+    return render_template("index.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html") 
 
 def get_order(sort, direction):
 
@@ -71,59 +78,6 @@ def get_order(sort, direction):
 
 
     return order_column, order_direction
-
-def get_search_conditions(query, min_age, max_age):
-
-    conditions = []
-    parameters = []
-
-
-    if query != "":
-
-        search_word = "%" + query + "%"
-
-        conditions.append(
-            "(name LIKE ? OR hobby LIKE ?)"
-        )
-
-        parameters.append(search_word)
-        parameters.append(search_word)
-
-
-    if min_age != "":
-
-        conditions.append("age >= ?")
-        parameters.append(int(min_age))
-
-
-    if max_age != "":
-
-        conditions.append("age <= ?")
-        parameters.append(int(max_age))
-
-
-    if conditions:
-
-        where_clause = (
-            "WHERE "
-            + " AND ".join(conditions)
-        )
-
-    else:
-
-        where_clause = ""
-
-
-    return where_clause, parameters
-
-@app.route("/")
-def home():
-
-    return render_template("index.html")
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
 
 
 @app.route("/people")
@@ -165,11 +119,44 @@ def show_people():
     connection = get_db_connection()
 
 
-    where_clause, parameters = get_search_conditions(
-        query,
-        min_age,
-        max_age
-    )
+    conditions = []
+    parameters = []
+
+
+    if query != "":
+
+        search_word = "%" + query + "%"
+
+        conditions.append(
+            "(name LIKE ? OR hobby LIKE ?)"
+        )
+
+        parameters.append(search_word)
+        parameters.append(search_word)
+
+
+    if min_age != "":
+
+        conditions.append("age >= ?")
+        parameters.append(int(min_age))
+
+
+    if max_age != "":
+
+        conditions.append("age <= ?")
+        parameters.append(int(max_age))
+
+
+    if conditions:
+
+        where_clause = (
+            "WHERE "
+            + " AND ".join(conditions)
+        )
+
+    else:
+
+        where_clause = ""
 
 
     people = connection.execute(
