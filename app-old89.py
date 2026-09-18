@@ -16,6 +16,20 @@ def get_db_connection():
     return connection
 
 
+app = Flask(__name__)
+
+app.secret_key = "flask-study-secret"
+
+
+def get_db_connection():
+
+    connection = sqlite3.connect("people.db")
+
+    connection.row_factory = sqlite3.Row
+
+    return connection
+
+
 def get_order(sort, direction):
 
     if sort == "age":
@@ -96,7 +110,7 @@ def get_statistics(connection, where_clause, parameters):
         parameters
     ).fetchone()
 
-    return statistics
+    return statistics 
 
 def validate_age_range(min_age, max_age):
 
@@ -144,10 +158,24 @@ def show_people():
     max_age = request.args.get("max_age", "")
 
 
-    min_age, max_age = validate_age_range(
-        min_age,
-        max_age
-    )
+    if min_age not in ["30", "40", "50"]:
+        min_age = ""
+
+    if max_age not in ["39", "49", "59"]:
+        max_age = ""
+
+
+    if min_age != "" and max_age != "":
+
+        if int(min_age) > int(max_age):
+
+            flash(
+                "最低年齢は最高年齢以下にしてください。",
+                "error"
+            )
+
+            min_age = ""
+            max_age = ""
 
 
     order_column, order_direction = get_order(
