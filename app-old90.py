@@ -207,28 +207,6 @@ def show_people():
         max_age=max_age
     )
 
-@app.route("/people/<int:person_id>")
-def person_detail(person_id):
-
-    connection = get_db_connection()
-
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
-
-    connection.close()
-
-    if person is None:
-        return "指定された人は見つかりませんでした。", 404
-
-    return render_template(
-        "detail.html",
-        person=person
-    )
-
-
-
 @app.route("/add", methods=["GET", "POST"])
 def add_person():
 
