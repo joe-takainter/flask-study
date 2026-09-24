@@ -53,28 +53,3 @@ th {
     margin-bottom: 15px;
     font-weight: bold;
 }
-
-.detail-actions {
-    margin-top: 20px;
-}
-
-.button {
-    display: inline-block;
-    padding: 8px 14px;
-    margin-right: 8px;
-    border: 1px solid #666;
-    text-decoration: none;
-    border-radius: 4px;
-}
-
-.edit-button {
-    font-weight: bold;
-}
-
-.delete-button {
-    font-weight: bold;
-}
-
-.back-button {
-    font-weight: bold;
-}
