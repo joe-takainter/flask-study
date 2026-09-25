@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="error-page">
+
+    <h2>404</h2>
+
+    <h3>ページが見つかりませんでした。</h3>
+
+    <p>
+        指定された登録者は存在しないか、
+        削除された可能性があります。
+    </p>
+
+    <p>
+        <a
+            href="{{ url_for('show_people') }}"
+            class="button back-button"
+        >
+            住所録一覧に戻る
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}

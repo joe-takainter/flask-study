@@ -99,12 +99,3 @@ th {
 .back-button:hover {
     background-color: #eeeeee;
 }
-
-.error-page {
-    margin-top: 30px;
-}
-
-.error-page h2 {
-    font-size: 40px;
-    margin-bottom: 10px;
-}

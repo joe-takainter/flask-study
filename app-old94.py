@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 
 
@@ -133,13 +133,6 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.errorhandler(404)
-def page_not_found(error):
-
-    return render_template(
-        "404.html"
-    ), 404
-
 
 @app.route("/people")
 def show_people():
@@ -227,7 +220,7 @@ def person_detail(person_id):
     connection.close()
 
     if person is None:
-        abort(404)
+        return "指定された人は見つかりませんでした。", 404
 
     return render_template(
         "detail.html",
