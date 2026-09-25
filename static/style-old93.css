@@ -67,35 +67,14 @@ th {
     border-radius: 4px;
 }
 
-.button:hover {
-    text-decoration: underline;
-}
-
 .edit-button {
     font-weight: bold;
 }
 
-.edit-button:hover {
-    background-color: #eeeeee;
-}
-
-.edit-button:hover {
-    background-color: #eeeeee;
-}
-
 .delete-button {
     font-weight: bold;
-    border-color: #cc0000;
-}
-
-.delete-button:hover {
-    background-color: #ffe6e6;
 }
 
 .back-button {
     font-weight: bold;
-}
-
-.back-button:hover {
-    background-color: #eeeeee;
 }
