@@ -428,12 +428,7 @@ def edit_person(person_id):
 
                 flash("更新しました！", "success")
 
-                return redirect(
-                    url_for(
-                        "person_detail",
-                         person_id=person_id
-                    )
-                )
+                return redirect(url_for("show_people"))
 
 
         connection.close()
