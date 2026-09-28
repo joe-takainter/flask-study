@@ -431,7 +431,7 @@ def edit_person(person_id):
                 return redirect(
                     url_for(
                         "person_detail",
-                         person_id=person_id
+                        person_id=person_id
                     )
                 )
 

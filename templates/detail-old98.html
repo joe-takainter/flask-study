@@ -2,7 +2,15 @@
 
 {% block content %}
 
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p class="{{ category }}-message">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
 <h2>登録者詳細</h2>
 
