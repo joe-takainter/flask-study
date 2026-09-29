@@ -18,29 +18,17 @@
 
     <p>
         名前：
-        <input
-        type="text"
-        name="name"
-        value="{{ name|default('') }}"
-        >
+        <input type="text" name="name" value="{{ name }}">
     </p>
 
     <p>
         年齢：
-        <input
-            type="text"
-            name="age"
-            value="{{ age|default('') }}"
-        >
+        <input type="text" name="age" value="{{ age }}">
     </p>
 
     <p>
         趣味：
-        <input
-            type="text"
-            name="hobby"
-            value="{{ hobby|default('') }}"
-        >
+        <input type="text" name="hobby" value="{{ hobby }}">
     </p>
 
     <button type="submit">登録</button>
