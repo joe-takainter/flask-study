@@ -122,31 +122,6 @@ def validate_age_range(min_age, max_age):
 
     return min_age, max_age
 
-def validate_person_input(name, age):
-
-    if name == "":
-        return "名前は必ず入力してください。"
-
-    if age == "":
-        return "年齢は必ず入力してください。"
-
-    if not age.isdigit():
-        return "年齢は数字で入力してください。"
-
-    if int(age) < 0 or int(age) > 120:
-        return "年齢は0～120の範囲で入力してください。"
-
-    return ""
-
-def person_name_exists(connection, name):
-
-    person = connection.execute(
-        "SELECT * FROM people WHERE name = ?",
-        (name,)
-    ).fetchone()
-
-    return person is not None
-
 
 
 @app.route("/")
@@ -275,19 +250,28 @@ def add_person():
         age = request.form["age"].strip()
         hobby = request.form["hobby"].strip()
 
-        error = validate_person_input(
-            name,
-            age
-        )
+        if name == "":
+            error = "名前は必ず入力してください。"
 
-        if error == "":
+        elif age == "":
+            error = "年齢は必ず入力してください。"
+
+        elif not age.isdigit():
+            error = "年齢は数字で入力してください。"
+
+        elif int(age) < 0 or int(age) > 120:
+            error = "年齢は0～120の範囲で入力してください。"
+
+        else:
 
             connection = get_db_connection()
 
-            if person_name_exists(
-                connection,
-                name
-            ):
+            person = connection.execute(
+                "SELECT * FROM people WHERE name = ?",
+                (name,)
+            ).fetchone()
+
+            if person:
 
                 error = "同じ名前が登録されています。"
 
@@ -304,13 +288,12 @@ def add_person():
                 )
 
                 connection.commit()
+
                 connection.close()
 
                 flash("登録しました！", "success")
 
-                return redirect(
-                    url_for("show_people")
-                )
+                return redirect(url_for("show_people"))
 
     return render_template(
         "add.html",
