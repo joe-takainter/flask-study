@@ -147,18 +147,6 @@ def person_name_exists(connection, name):
 
     return person is not None
 
-def insert_person(connection, name, age, hobby):
-
-    connection.execute(
-        """
-        INSERT INTO people (name, age, hobby)
-        VALUES (?, ?, ?)
-        """,
-        (name, age, hobby)
-    )
-
-    connection.commit()
-
 
 
 @app.route("/")
@@ -307,13 +295,15 @@ def add_person():
 
             else:
 
-                insert_person(
-                    connection,
-                    name,
-                    age,
-                    hobby
+                connection.execute(
+                    """
+                    INSERT INTO people (name, age, hobby)
+                    VALUES (?, ?, ?)
+                    """,
+                    (name, age, hobby)
                 )
 
+                connection.commit()
                 connection.close()
 
                 flash("登録しました！", "success")
