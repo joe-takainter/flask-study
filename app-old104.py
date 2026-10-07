@@ -138,27 +138,12 @@ def validate_person_input(name, age):
 
     return ""
 
-def person_name_exists(connection, name, exclude_id=None):
+def person_name_exists(connection, name):
 
-    if exclude_id is None:
-
-        person = connection.execute(
-            """
-            SELECT id FROM people
-            WHERE name = ?
-            """,
-            (name,)
-        ).fetchone()
-
-    else:
-
-        person = connection.execute(
-            """
-            SELECT id FROM people
-            WHERE name = ? AND id != ?
-            """,
-            (name, exclude_id)
-        ).fetchone()
+    person = connection.execute(
+        "SELECT * FROM people WHERE name = ?",
+        (name,)
+    ).fetchone()
 
     return person is not None
 
@@ -397,6 +382,7 @@ def edit_person(person_id):
         (person_id,)
     ).fetchone()
 
+
     if person is None:
 
         connection.close()
@@ -405,7 +391,9 @@ def edit_person(person_id):
 
         return redirect(url_for("show_people"))
 
+
     error = ""
+
 
     if request.method == "POST":
 
@@ -413,20 +401,42 @@ def edit_person(person_id):
         age = request.form["age"].strip()
         hobby = request.form["hobby"].strip()
 
-        error = validate_person_input(
-            name,
-            age
-        )
 
-        if error == "":
+        if name == "":
 
-            if person_name_exists(
-                connection,
-                name,
-                person_id
-            ):
+            error = "名前は必ず入力してください。"
+
+
+        elif age == "":
+
+            error = "年齢は必ず入力してください。"
+
+
+        elif not age.isdigit():
+
+            error = "年齢は数字で入力してください。"
+
+
+        elif int(age) < 0 or int(age) > 120:
+
+            error = "年齢は0～120の範囲で入力してください。"
+
+
+        else:
+
+            duplicate = connection.execute(
+                """
+                SELECT * FROM people
+                WHERE name = ? AND id != ?
+                """,
+                (name, person_id)
+            ).fetchone()
+
+
+            if duplicate:
 
                 error = "同じ名前が登録されています。"
+
 
             else:
 
@@ -452,6 +462,7 @@ def edit_person(person_id):
                     )
                 )
 
+
         connection.close()
 
         return render_template(
@@ -464,6 +475,7 @@ def edit_person(person_id):
             },
             error=error
         )
+
 
     connection.close()
 
