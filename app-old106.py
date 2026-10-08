@@ -175,19 +175,6 @@ def insert_person(connection, name, age, hobby):
     connection.commit()
 
 
-def update_person(connection, person_id, name, age, hobby):
-
-    connection.execute(
-        """
-        UPDATE people
-        SET name = ?, age = ?, hobby = ?
-        WHERE id = ?
-        """,
-        (name, age, hobby, person_id)
-    )
-
-    connection.commit()
-
 
 @app.route("/")
 def home():
@@ -443,13 +430,16 @@ def edit_person(person_id):
 
             else:
 
-                update_person(
-                    connection,
-                    person_id,
-                    name,
-                    age,
-                    hobby
+                connection.execute(
+                    """
+                    UPDATE people
+                    SET name = ?, age = ?, hobby = ?
+                    WHERE id = ?
+                    """,
+                    (name, age, hobby, person_id)
                 )
+
+                connection.commit()
 
                 connection.close()
 
