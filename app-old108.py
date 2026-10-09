@@ -1,0 +1,504 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
+import sqlite3
+
+
+app = Flask(__name__)
+
+app.secret_key = "flask-study-secret"
+
+
+def get_db_connection():
+
+    connection = sqlite3.connect("people.db")
+
+    connection.row_factory = sqlite3.Row
+
+    return connection
+
+
+def get_order(sort, direction):
+
+    if sort == "age":
+        order_column = "age"
+
+    elif sort == "id":
+        order_column = "id"
+
+    else:
+        order_column = "name"
+
+
+    if direction == "desc":
+        order_direction = "DESC"
+
+    else:
+        order_direction = "ASC"
+
+
+    return order_column, order_direction
+
+def get_search_conditions(query, min_age, max_age):
+
+    conditions = []
+    parameters = []
+
+
+    if query != "":
+
+        search_word = "%" + query + "%"
+
+        conditions.append(
+            "(name LIKE ? OR hobby LIKE ?)"
+        )
+
+        parameters.append(search_word)
+        parameters.append(search_word)
+
+
+    if min_age != "":
+
+        conditions.append("age >= ?")
+        parameters.append(int(min_age))
+
+
+    if max_age != "":
+
+        conditions.append("age <= ?")
+        parameters.append(int(max_age))
+
+
+    if conditions:
+
+        where_clause = (
+            "WHERE "
+            + " AND ".join(conditions)
+        )
+
+    else:
+
+        where_clause = ""
+
+
+    return where_clause, parameters
+
+def get_statistics(connection, where_clause, parameters):
+
+    statistics = connection.execute(
+        f"""
+        SELECT
+            COUNT(*) AS total,
+            AVG(age) AS average,
+            MIN(age) AS minimum,
+            MAX(age) AS maximum
+        FROM people
+        {where_clause}
+        """,
+        parameters
+    ).fetchone()
+
+    return statistics
+
+def validate_age_range(min_age, max_age):
+
+    if min_age not in ["30", "40", "50"]:
+        min_age = ""
+
+    if max_age not in ["39", "49", "59"]:
+        max_age = ""
+
+
+    if min_age != "" and max_age != "":
+
+        if int(min_age) > int(max_age):
+
+            flash(
+                "最低年齢は最高年齢以下にしてください。",
+                "error"
+            )
+
+            min_age = ""
+            max_age = ""
+
+
+    return min_age, max_age
+
+def validate_person_input(name, age):
+
+    if name == "":
+        return "名前は必ず入力してください。"
+
+    if age == "":
+        return "年齢は必ず入力してください。"
+
+    if not age.isdigit():
+        return "年齢は数字で入力してください。"
+
+    if int(age) < 0 or int(age) > 120:
+        return "年齢は0～120の範囲で入力してください。"
+
+    return ""
+
+def person_name_exists(connection, name, exclude_id=None):
+
+    if exclude_id is None:
+
+        person = connection.execute(
+            """
+            SELECT id FROM people
+            WHERE name = ?
+            """,
+            (name,)
+        ).fetchone()
+
+    else:
+
+        person = connection.execute(
+            """
+            SELECT id FROM people
+            WHERE name = ? AND id != ?
+            """,
+            (name, exclude_id)
+        ).fetchone()
+
+    return person is not None
+
+def insert_person(connection, name, age, hobby):
+
+    connection.execute(
+        """
+        INSERT INTO people (name, age, hobby)
+        VALUES (?, ?, ?)
+        """,
+        (name, age, hobby)
+    )
+
+    connection.commit()
+
+
+def update_person(connection, person_id, name, age, hobby):
+
+    connection.execute(
+        """
+        UPDATE people
+        SET name = ?, age = ?, hobby = ?
+        WHERE id = ?
+        """,
+        (name, age, hobby, person_id)
+    )
+
+    connection.commit()
+
+def delete_person_from_db(connection, person_id):
+
+    connection.execute(
+        "DELETE FROM people WHERE id = ?",
+        (person_id,)
+    )
+
+    connection.commit()  
+
+def get_person_by_id(connection, person_id):
+
+    person = connection.execute(
+        "SELECT * FROM people WHERE id = ?",
+        (person_id,)
+    ).fetchone()
+
+    return person      
+
+
+@app.route("/")
+def home():
+
+    return render_template("index.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.errorhandler(404)
+def page_not_found(error):
+
+    return render_template(
+        "404.html"
+    ), 404
+
+
+@app.route("/people")
+def show_people():
+
+    query = request.args.get("q", "").strip()
+    sort = request.args.get("sort", "name")
+    direction = request.args.get("direction", "asc")
+    min_age = request.args.get("min_age", "")
+    max_age = request.args.get("max_age", "")
+
+
+    min_age, max_age = validate_age_range(
+        min_age,
+        max_age
+    )
+
+
+    order_column, order_direction = get_order(
+        sort,
+        direction
+    )
+
+
+    connection = get_db_connection()
+
+
+    where_clause, parameters = get_search_conditions(
+        query,
+        min_age,
+        max_age
+    )
+
+
+    people = connection.execute(
+        f"""
+        SELECT * FROM people
+        {where_clause}
+        ORDER BY {order_column} {order_direction}
+        """,
+        parameters
+    ).fetchall()
+
+
+    statistics = get_statistics(
+        connection,
+        where_clause,
+        parameters
+    )
+
+
+    count = statistics["total"]
+    average_age = statistics["average"]
+    minimum_age = statistics["minimum"]
+    maximum_age = statistics["maximum"]
+
+
+    connection.close()
+
+
+    return render_template(
+        "people.html",
+        people=people,
+        query=query,
+        count=count,
+        total_count=count,
+        average_age=average_age,
+        minimum_age=minimum_age,
+        maximum_age=maximum_age,
+        sort=sort,
+        direction=direction,
+        min_age=min_age,
+        max_age=max_age
+    )
+
+@app.route("/people/<int:person_id>")
+def person_detail(person_id):
+
+    connection = get_db_connection()
+
+    person = get_person_by_id(
+        connection,
+        person_id
+    )
+
+    connection.close()
+    if person is None:
+        abort(404)
+
+    return render_template(
+        "detail.html",
+        person=person
+    )
+
+
+
+@app.route("/add", methods=["GET", "POST"])
+def add_person():
+
+    error = ""
+    name = ""
+    age = ""
+    hobby = ""
+
+    if request.method == "POST":
+
+        name = request.form["name"].strip()
+        age = request.form["age"].strip()
+        hobby = request.form["hobby"].strip()
+
+        error = validate_person_input(
+            name,
+            age
+        )
+
+        if error == "":
+
+            connection = get_db_connection()
+
+            if person_name_exists(
+                connection,
+                name
+            ):
+
+                error = "同じ名前が登録されています。"
+
+                connection.close()
+
+            else:
+
+                insert_person(
+                    connection,
+                    name,
+                    age,
+                    hobby
+                )
+
+                connection.close()
+
+                flash("登録しました！", "success")
+
+                return redirect(
+                    url_for("show_people")
+                )
+
+    return render_template(
+        "add.html",
+        error=error,
+        name=name,
+        age=age,
+        hobby=hobby
+    )
+
+@app.route("/delete/<int:person_id>", methods=["GET", "POST"])
+def delete_person(person_id):
+
+    connection = get_db_connection()
+
+    person = connection.execute(
+        "SELECT * FROM people WHERE id = ?",
+        (person_id,)
+    ).fetchone()
+
+
+    if person is None:
+
+        connection.close()
+
+        flash("その人は登録されていません。")
+
+        return redirect(url_for("show_people"))
+
+
+    if request.method == "POST":
+
+        delete_person_from_db(
+            connection,
+            person_id
+        )
+
+        connection.close()
+
+        flash("削除しました！", "success")
+        return redirect(url_for("show_people"))
+
+
+    connection.close()
+
+    return render_template(
+        "delete_confirm.html",
+        person=person
+    )
+@app.route("/edit/<int:person_id>", methods=["GET", "POST"])
+def edit_person(person_id):
+
+    connection = get_db_connection()
+
+    person = get_person_by_id(
+        connection,
+        person_id
+    )
+
+    if person is None:
+
+        connection.close()
+
+        flash("その人は登録されていません。")
+
+        return redirect(url_for("show_people"))
+
+    error = ""
+
+    if request.method == "POST":
+
+        name = request.form["name"].strip()
+        age = request.form["age"].strip()
+        hobby = request.form["hobby"].strip()
+
+        error = validate_person_input(
+            name,
+            age
+        )
+
+        if error == "":
+
+            if person_name_exists(
+                connection,
+                name,
+                person_id
+            ):
+
+                error = "同じ名前が登録されています。"
+
+            else:
+
+                update_person(
+                    connection,
+                    person_id,
+                    name,
+                    age,
+                    hobby
+                )
+
+                connection.close()
+
+                flash("更新しました！", "success")
+
+                return redirect(
+                    url_for(
+                        "person_detail",
+                        person_id=person_id
+                    )
+                )
+
+        connection.close()
+
+        return render_template(
+            "edit.html",
+            person={
+                "id": person_id,
+                "name": name,
+                "age": age,
+                "hobby": hobby
+            },
+            error=error
+        )
+
+    connection.close()
+
+    return render_template(
+        "edit.html",
+        person=person,
+        error=error
+    )
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
+
+
