@@ -164,15 +164,25 @@ def person_name_exists(connection, name, exclude_id=None):
 
 def insert_person(connection, name, age, hobby):
 
-    connection.execute(
-        """
-        INSERT INTO people (name, age, hobby)
-        VALUES (?, ?, ?)
-        """,
-        (name, age, hobby)
-    )
+    try:
 
-    connection.commit()
+        connection.execute(
+            """
+            INSERT INTO people (name, age, hobby)
+            VALUES (?, ?, ?)
+            """,
+            (name, age, hobby)
+        )
+
+        connection.commit()
+
+        return True
+
+    except sqlite3.Error:
+
+        connection.rollback()
+
+        return False
 
 
 def update_person(connection, person_id, name, age, hobby):
@@ -344,7 +354,7 @@ def add_person():
 
             else:
 
-                insert_person(
+                success = insert_person(
                     connection,
                     name,
                     age,
@@ -353,11 +363,17 @@ def add_person():
 
                 connection.close()
 
-                flash("登録しました！", "success")
+                if success:
 
-                return redirect(
-                    url_for("show_people")
-                )
+                    flash("登録しました！", "success")
+
+                    return redirect(
+                        url_for("show_people")
+                    )
+
+                else:
+
+                    error = "データベースの登録中にエラーが発生しました。"
 
     return render_template(
         "add.html",
