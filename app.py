@@ -198,14 +198,26 @@ def update_person(connection, person_id, name, age, hobby):
 
     connection.commit()
 
+
 def delete_person_from_db(connection, person_id):
 
-    connection.execute(
-        "DELETE FROM people WHERE id = ?",
-        (person_id,)
-    )
+    try:
 
-    connection.commit()    
+        connection.execute(
+            "DELETE FROM people WHERE id = ?",
+            (person_id,)
+        )
+
+        connection.commit()
+
+        return True
+
+    except sqlite3.Error:
+
+        connection.rollback()
+
+        return False
+    
 
 
 @app.route("/")
@@ -405,18 +417,28 @@ def delete_person(person_id):
 
     if request.method == "POST":
 
-        delete_person_from_db(
+        success = delete_person_from_db(
             connection,
             person_id
         )
 
         connection.close()
 
-        flash("削除しました！", "success")
-        return redirect(url_for("show_people"))
+        if success:
 
+            flash("削除しました！", "success")
 
-    connection.close()
+        else:
+
+            flash(
+                "データベースの削除中にエラーが発生しました。",
+                "error"
+            )
+
+        return redirect(
+            url_for("show_people")
+        )
+    
 
     return render_template(
         "delete_confirm.html",
