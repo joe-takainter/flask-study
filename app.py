@@ -13,7 +13,18 @@ def get_db_connection():
 
     connection.row_factory = sqlite3.Row
 
-    return connection
+    return connection 
+
+
+def get_person_by_id(connection, person_id):
+
+    person = connection.execute(
+        "SELECT * FROM people WHERE id = ?",
+        (person_id,)
+    ).fetchone()
+
+    return person
+
 
 
 def get_order(sort, direction):
@@ -395,16 +406,16 @@ def add_person():
         hobby=hobby
     )
 
+
 @app.route("/delete/<int:person_id>", methods=["GET", "POST"])
 def delete_person(person_id):
 
     connection = get_db_connection()
 
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
-
+    person = get_person_by_id(
+        connection,
+        person_id
+    )
 
     if person is None:
 
@@ -413,7 +424,6 @@ def delete_person(person_id):
         flash("その人は登録されていません。")
 
         return redirect(url_for("show_people"))
-
 
     if request.method == "POST":
 
@@ -438,12 +448,14 @@ def delete_person(person_id):
         return redirect(
             url_for("show_people")
         )
-    
+
+    connection.close()
 
     return render_template(
         "delete_confirm.html",
         person=person
     )
+
 @app.route("/edit/<int:person_id>", methods=["GET", "POST"])
 def edit_person(person_id):
 
