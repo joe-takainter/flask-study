@@ -248,6 +248,7 @@ def page_not_found(error):
     ), 404
 
 
+
 @app.route("/people")
 def show_people():
 
@@ -257,21 +258,15 @@ def show_people():
     min_age = request.args.get("min_age", "")
     max_age = request.args.get("max_age", "")
 
-
     min_age, max_age = validate_age_range(
         min_age,
         max_age
     )
 
-
     order_column, order_direction = get_order(
         sort,
         direction
     )
-
-
-    connection = get_db_connection()
-
 
     where_clause, parameters = get_search_conditions(
         query,
@@ -279,32 +274,33 @@ def show_people():
         max_age
     )
 
+    connection = get_db_connection()
 
-    people = connection.execute(
-        f"""
-        SELECT * FROM people
-        {where_clause}
-        ORDER BY {order_column} {order_direction}
-        """,
-        parameters
-    ).fetchall()
+    try:
 
+        people = connection.execute(
+            f"""
+            SELECT * FROM people
+            {where_clause}
+            ORDER BY {order_column} {order_direction}
+            """,
+            parameters
+        ).fetchall()
 
-    statistics = get_statistics(
-        connection,
-        where_clause,
-        parameters
-    )
+        statistics = get_statistics(
+            connection,
+            where_clause,
+            parameters
+        )
 
+        count = statistics["total"]
+        average_age = statistics["average"]
+        minimum_age = statistics["minimum"]
+        maximum_age = statistics["maximum"]
 
-    count = statistics["total"]
-    average_age = statistics["average"]
-    minimum_age = statistics["minimum"]
-    maximum_age = statistics["maximum"]
+    finally:
 
-
-    connection.close()
-
+        connection.close()
 
     return render_template(
         "people.html",
@@ -320,6 +316,7 @@ def show_people():
         min_age=min_age,
         max_age=max_age
     )
+
 
 
 @app.route("/people/<int:person_id>")
@@ -349,6 +346,7 @@ def person_detail(person_id):
 
 
 
+
 @app.route("/add", methods=["GET", "POST"])
 def add_person():
 
@@ -372,37 +370,42 @@ def add_person():
 
             connection = get_db_connection()
 
-            if person_name_exists(
-                connection,
-                name
-            ):
+            try:
 
-                error = "同じ名前が登録されています。"
-
-                connection.close()
-
-            else:
-
-                success = insert_person(
+                if person_name_exists(
                     connection,
-                    name,
-                    age,
-                    hobby
-                )
+                    name
+                ):
 
-                connection.close()
-
-                if success:
-
-                    flash("登録しました！", "success")
-
-                    return redirect(
-                        url_for("show_people")
-                    )
+                    error = "同じ名前が登録されています。"
 
                 else:
 
-                    error = "データベースの登録中にエラーが発生しました。"
+                    success = insert_person(
+                        connection,
+                        name,
+                        age,
+                        hobby
+                    )
+
+                    if success:
+
+                        flash("登録しました！", "success")
+
+                        return redirect(
+                            url_for("show_people")
+                        )
+
+                    else:
+
+                        error = (
+                            "データベースの登録中に"
+                            "エラーが発生しました。"
+                        )
+
+            finally:
+
+                connection.close()
 
     return render_template(
         "add.html",
@@ -411,6 +414,7 @@ def add_person():
         age=age,
         hobby=hobby
     )
+
 
 
 @app.route("/delete/<int:person_id>", methods=["GET", "POST"])
