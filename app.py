@@ -173,27 +173,27 @@ def person_name_exists(connection, name, exclude_id=None):
 
     return person is not None
 
+
 def insert_person(connection, name, age, hobby):
 
     try:
 
-        connection.execute(
-            """
-            INSERT INTO people (name, age, hobby)
-            VALUES (?, ?, ?)
-            """,
-            (name, age, hobby)
-        )
+        with connection:
 
-        connection.commit()
+            connection.execute(
+                """
+                INSERT INTO people (name, age, hobby)
+                VALUES (?, ?, ?)
+                """,
+                (name, age, hobby)
+            )
 
         return True
 
     except sqlite3.Error:
 
-        connection.rollback()
-
         return False
+
 
 
 def update_person(connection, person_id, name, age, hobby):
