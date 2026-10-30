@@ -196,18 +196,27 @@ def insert_person(connection, name, age, hobby):
 
 
 
+
 def update_person(connection, person_id, name, age, hobby):
 
-    connection.execute(
-        """
-        UPDATE people
-        SET name = ?, age = ?, hobby = ?
-        WHERE id = ?
-        """,
-        (name, age, hobby, person_id)
-    )
+    try:
 
-    connection.commit()
+        with connection:
+
+            connection.execute(
+                """
+                UPDATE people
+                SET name = ?, age = ?, hobby = ?
+                WHERE id = ?
+                """,
+                (name, age, hobby, person_id)
+            )
+
+        return True
+
+    except sqlite3.Error:
+
+        return False
 
 
 def delete_person_from_db(connection, person_id):
