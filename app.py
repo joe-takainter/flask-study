@@ -219,24 +219,24 @@ def update_person(connection, person_id, name, age, hobby):
         return False
 
 
+
 def delete_person_from_db(connection, person_id):
 
     try:
 
-        connection.execute(
-            "DELETE FROM people WHERE id = ?",
-            (person_id,)
-        )
+        with connection:
 
-        connection.commit()
+            connection.execute(
+                "DELETE FROM people WHERE id = ?",
+                (person_id,)
+            )
 
         return True
 
     except sqlite3.Error:
 
-        connection.rollback()
-
         return False
+
     
 
 
