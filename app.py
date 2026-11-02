@@ -197,13 +197,14 @@ def insert_person(connection, name, age, hobby):
 
 
 
+
 def update_person(connection, person_id, name, age, hobby):
 
     try:
 
         with connection:
 
-            connection.execute(
+            cursor = connection.execute(
                 """
                 UPDATE people
                 SET name = ?, age = ?, hobby = ?
@@ -212,11 +213,14 @@ def update_person(connection, person_id, name, age, hobby):
                 (name, age, hobby, person_id)
             )
 
-        return True
+            updated_count = cursor.rowcount
+
+        return updated_count > 0
 
     except sqlite3.Error:
 
         return False
+
 
 
 
