@@ -3,3 +3,27 @@ __pycache__/
 *.pyc
 .env
 people.db
+# Python virtual environments
+venv/
+.venv/
+flask-venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# SQLite databases
+people.db
+people.db-*
+*.db-wal
+*.db-shm
+
+# Local backup files
+*.bak
+*.bak-*

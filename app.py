@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
+import os
 import sqlite3
 
 
 app = Flask(__name__)
 
-app.secret_key = "flask-study-secret"
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
+
 
 
 def get_db_connection():
@@ -205,7 +207,7 @@ def delete_person_from_db(connection, person_id):
         (person_id,)
     )
 
-    connection.commit()    
+    connection.commit()
 
 
 @app.route("/")
@@ -506,7 +508,7 @@ def edit_person(person_id):
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=False)
 
 
 
