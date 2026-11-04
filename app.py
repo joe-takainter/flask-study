@@ -224,22 +224,26 @@ def update_person(connection, person_id, name, age, hobby):
 
 
 
+
 def delete_person_from_db(connection, person_id):
 
     try:
 
         with connection:
 
-            connection.execute(
+            cursor = connection.execute(
                 "DELETE FROM people WHERE id = ?",
                 (person_id,)
             )
 
-        return True
+            deleted_count = cursor.rowcount
+
+        return deleted_count > 0
 
     except sqlite3.Error:
 
         return False
+
 
     
 
