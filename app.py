@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
 
-
 def get_db_connection():
 
     connection = sqlite3.connect("people.db")
@@ -16,6 +15,17 @@ def get_db_connection():
     connection.row_factory = sqlite3.Row
 
     return connection
+
+
+def get_person_by_id(connection, person_id):
+
+    person = connection.execute(
+        "SELECT * FROM people WHERE id = ?",
+        (person_id,)
+    ).fetchone()
+
+    return person
+
 
 
 def get_order(sort, direction):
@@ -164,50 +174,79 @@ def person_name_exists(connection, name, exclude_id=None):
 
     return person is not None
 
+
 def insert_person(connection, name, age, hobby):
 
     try:
 
-        connection.execute(
-            """
-            INSERT INTO people (name, age, hobby)
-            VALUES (?, ?, ?)
-            """,
-            (name, age, hobby)
-        )
+        with connection:
 
-        connection.commit()
+            connection.execute(
+                """
+                INSERT INTO people (name, age, hobby)
+                VALUES (?, ?, ?)
+                """,
+                (name, age, hobby)
+            )
 
         return True
 
     except sqlite3.Error:
 
-        connection.rollback()
-
         return False
+
+
+
 
 
 def update_person(connection, person_id, name, age, hobby):
 
-    connection.execute(
-        """
-        UPDATE people
-        SET name = ?, age = ?, hobby = ?
-        WHERE id = ?
-        """,
-        (name, age, hobby, person_id)
-    )
+    try:
 
-    connection.commit()
+        with connection:
+
+            cursor = connection.execute(
+                """
+                UPDATE people
+                SET name = ?, age = ?, hobby = ?
+                WHERE id = ?
+                """,
+                (name, age, hobby, person_id)
+            )
+
+            updated_count = cursor.rowcount
+
+        return updated_count > 0
+
+    except sqlite3.Error:
+
+        return False
+
+
+
+
 
 def delete_person_from_db(connection, person_id):
 
-    connection.execute(
-        "DELETE FROM people WHERE id = ?",
-        (person_id,)
-    )
+    try:
 
-    connection.commit()
+        with connection:
+
+            cursor = connection.execute(
+                "DELETE FROM people WHERE id = ?",
+                (person_id,)
+            )
+
+            deleted_count = cursor.rowcount
+
+        return deleted_count > 0
+
+    except sqlite3.Error:
+
+        return False
+
+
+
 
 
 @app.route("/")
@@ -227,6 +266,7 @@ def page_not_found(error):
     ), 404
 
 
+
 @app.route("/people")
 def show_people():
 
@@ -236,21 +276,15 @@ def show_people():
     min_age = request.args.get("min_age", "")
     max_age = request.args.get("max_age", "")
 
-
     min_age, max_age = validate_age_range(
         min_age,
         max_age
     )
 
-
     order_column, order_direction = get_order(
         sort,
         direction
     )
-
-
-    connection = get_db_connection()
-
 
     where_clause, parameters = get_search_conditions(
         query,
@@ -258,32 +292,33 @@ def show_people():
         max_age
     )
 
+    connection = get_db_connection()
 
-    people = connection.execute(
-        f"""
-        SELECT * FROM people
-        {where_clause}
-        ORDER BY {order_column} {order_direction}
-        """,
-        parameters
-    ).fetchall()
+    try:
 
+        people = connection.execute(
+            f"""
+            SELECT * FROM people
+            {where_clause}
+            ORDER BY {order_column} {order_direction}
+            """,
+            parameters
+        ).fetchall()
 
-    statistics = get_statistics(
-        connection,
-        where_clause,
-        parameters
-    )
+        statistics = get_statistics(
+            connection,
+            where_clause,
+            parameters
+        )
 
+        count = statistics["total"]
+        average_age = statistics["average"]
+        minimum_age = statistics["minimum"]
+        maximum_age = statistics["maximum"]
 
-    count = statistics["total"]
-    average_age = statistics["average"]
-    minimum_age = statistics["minimum"]
-    maximum_age = statistics["maximum"]
+    finally:
 
-
-    connection.close()
-
+        connection.close()
 
     return render_template(
         "people.html",
@@ -300,17 +335,23 @@ def show_people():
         max_age=max_age
     )
 
+
+
 @app.route("/people/<int:person_id>")
 def person_detail(person_id):
 
     connection = get_db_connection()
 
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
+    try:
 
-    connection.close()
+        person = get_person_by_id(
+            connection,
+            person_id
+        )
+
+    finally:
+
+        connection.close()
 
     if person is None:
         abort(404)
@@ -319,6 +360,8 @@ def person_detail(person_id):
         "detail.html",
         person=person
     )
+
+
 
 
 
@@ -345,37 +388,42 @@ def add_person():
 
             connection = get_db_connection()
 
-            if person_name_exists(
-                connection,
-                name
-            ):
+            try:
 
-                error = "同じ名前が登録されています。"
-
-                connection.close()
-
-            else:
-
-                success = insert_person(
+                if person_name_exists(
                     connection,
-                    name,
-                    age,
-                    hobby
-                )
+                    name
+                ):
 
-                connection.close()
-
-                if success:
-
-                    flash("登録しました！", "success")
-
-                    return redirect(
-                        url_for("show_people")
-                    )
+                    error = "同じ名前が登録されています。"
 
                 else:
 
-                    error = "データベースの登録中にエラーが発生しました。"
+                    success = insert_person(
+                        connection,
+                        name,
+                        age,
+                        hobby
+                    )
+
+                    if success:
+
+                        flash("登録しました！", "success")
+
+                        return redirect(
+                            url_for("show_people")
+                        )
+
+                    else:
+
+                        error = (
+                            "データベースの登録中に"
+                            "エラーが発生しました。"
+                        )
+
+            finally:
+
+                connection.close()
 
     return render_template(
         "add.html",
@@ -385,16 +433,17 @@ def add_person():
         hobby=hobby
     )
 
+
+
 @app.route("/delete/<int:person_id>", methods=["GET", "POST"])
 def delete_person(person_id):
 
     connection = get_db_connection()
 
-    person = connection.execute(
-        "SELECT * FROM people WHERE id = ?",
-        (person_id,)
-    ).fetchone()
-
+    person = get_person_by_id(
+        connection,
+        person_id
+    )
 
     if person is None:
 
@@ -404,19 +453,29 @@ def delete_person(person_id):
 
         return redirect(url_for("show_people"))
 
-
     if request.method == "POST":
 
-        delete_person_from_db(
+        success = delete_person_from_db(
             connection,
             person_id
         )
 
         connection.close()
 
-        flash("削除しました！", "success")
-        return redirect(url_for("show_people"))
+        if success:
 
+            flash("削除しました！", "success")
+
+        else:
+
+            flash(
+                "データベースの削除中にエラーが発生しました。",
+                "error"
+            )
+
+        return redirect(
+            url_for("show_people")
+        )
 
     connection.close()
 
@@ -424,6 +483,7 @@ def delete_person(person_id):
         "delete_confirm.html",
         person=person
     )
+
 @app.route("/edit/<int:person_id>", methods=["GET", "POST"])
 def edit_person(person_id):
 
