@@ -40,18 +40,37 @@ th {
     font-weight: bold;
 }
 
-.error-message {
-    border: 1px solid #cc0000;
+/* 成功メッセージ */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
     padding: 10px;
     margin-bottom: 15px;
     font-weight: bold;
+    border-radius: 6px;
 }
 
-.success-message {
-    border: 1px solid #008000;
+/* エラーメッセージ */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
     padding: 10px;
     margin-bottom: 15px;
     font-weight: bold;
+    border-radius: 6px;
+}
+
+/* 注意メッセージ */
+.warning-message {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    border-radius: 6px;
 }
 
 .detail-actions {

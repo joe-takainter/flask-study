@@ -449,7 +449,7 @@ def delete_person(person_id):
 
         connection.close()
 
-        flash("その人は登録されていません。")
+        flash("その人は登録されていません。", "warning")
 
         return redirect(url_for("show_people"))
 
@@ -498,7 +498,7 @@ def edit_person(person_id):
 
         connection.close()
 
-        flash("その人は登録されていません。")
+        flash("その人は登録されていません。", "warning")
 
         return redirect(url_for("show_people"))
 
