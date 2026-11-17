@@ -27,3 +27,4 @@ people.db-*
 # Local backup files
 *.bak
 *.bak-*
+*.bak[0-9]*
